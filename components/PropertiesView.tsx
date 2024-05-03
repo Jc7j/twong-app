@@ -1,5 +1,6 @@
 'use client'
 
+import clsx from 'clsx'
 import React, { useEffect } from 'react'
 import {
   Table,
@@ -10,22 +11,22 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useStore } from '@/hooks/stores/useStore'
-import { AppState, Property } from '@/lib/definitions'
+import { Property } from '@/lib/definitions'
 
-const PropertiesView: React.FC = () => {
-  const { properties, fetchProperties } = useStore((state: AppState) => ({
-    properties: state.properties,
-    fetchProperties: state.fetchProperties,
-  }))
+export default function PropertiesView() {
+  const {
+    properties,
+    fetchProperties,
+    selectedPropertyId,
+    setSelectedPropertyId,
+  } = useStore()
 
   useEffect(() => {
     fetchProperties()
   }, [fetchProperties])
 
   const formatDate = (dateString: Date): string => {
-    console.log('Date string', dateString)
     const date = new Date(dateString)
-    console.log('parsed', date)
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -33,33 +34,47 @@ const PropertiesView: React.FC = () => {
     })
   }
 
+  const handleRowClick = (propertyId: number) => {
+    setSelectedPropertyId(propertyId)
+  }
+
+  console.log(properties)
   return (
-    <section className="rounded-2xl border p-4 w-7/12">
+    <section className="rounded-2xl border p-4 md:w-7/12">
       <Table>
         <TableHeader>
-          <TableRow className="flex w-full">
+          <TableRow className="flex w-full ">
             <TableHead className="flex-grow flex-shrink w-1/3">Name</TableHead>
-            <TableHead className="flex-grow flex-shrink w-1/3 text-center">Last Modified</TableHead>
-            <TableHead className="flex-grow flex-shrink w-1/3 text-right">Current Month Total</TableHead>
+            <TableHead className="flex-grow flex-shrink w-1/3 text-center">
+              Last Modified
+            </TableHead>
+            <TableHead className="flex-grow flex-shrink w-1/3 text-right">
+              Last Modified Month Total
+            </TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {properties?.map((property: Property) => (
             <TableRow
+              className={clsx(
+                'flex w-full text-primary transition-colors hover:bg-accent',
+                selectedPropertyId === property.propertyId &&
+                  'bg-accent text-background font-medium'
+              )}
               key={property.propertyId}
-              className="flex w-full text-secondary"
+              onClick={() => handleRowClick(property.propertyId)}
             >
-              <TableCell className="flex-grow flex-shrink w-1/3">{property.name}</TableCell>
+              <TableCell className="flex-grow flex-shrink w-1/3">
+                {property.name}
+              </TableCell>
               {property.invoices && (
                 <TableCell className="flex-grow flex-shrink w-1/3 text-center">
                   {formatDate(property.invoices[0].lastModified)}
                 </TableCell>
               )}
               <TableCell className="flex-grow flex-shrink w-1/3 text-right">
-                {property.invoices
-                  ?.reduce((total, invoice) => total + invoice.total, 0)
-                  .toFixed(2)}
+                {property.invoices && property.invoices[0].total}
               </TableCell>
             </TableRow>
           ))}
@@ -68,5 +83,3 @@ const PropertiesView: React.FC = () => {
     </section>
   )
 }
-
-export default PropertiesView

@@ -1,11 +1,12 @@
+import InvoiceView from '@/components/InvoiceView'
 import PropertiesView from '@/components/PropertiesView'
 
 export default function Home() {
   return (
     <main className="container bg-background">
       <div className="md:mt-16">
-        <span className="flex items-center">
-          <h1 className="pr-6 text-2xl">Properties</h1>
+        <span className="flex items-end">
+          <h1 className="pr-6 text-4xl font-medium">Properties</h1>
           <p>download invoices</p>
         </span>
       </div>
@@ -15,10 +16,10 @@ export default function Home() {
         <p>Create New Property</p>
       </span>
 
-      <div className="flex mt-9">
+      <div className="flex gap-8 mt-9 flex-col md:flex-row">
         <PropertiesView />
 
-        <div>Invoice view</div>
+        <InvoiceView />
       </div>
     </main>
   )

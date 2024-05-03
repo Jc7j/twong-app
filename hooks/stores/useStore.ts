@@ -1,19 +1,28 @@
 import { create } from 'zustand'
-import { AppState } from '@/lib/definitions'
 import { supabase } from '@/lib/supabase/server'
+import { AppState, Property } from '@/lib/definitions'
 
-export const useStore = create<AppState>((set) => ({
+interface StoreState extends AppState {
+  selectedPropertyId: number | null
+  setSelectedPropertyId: (propertyId: number | null) => void
+}
+
+export const useStore = create<StoreState>((set) => ({
   properties: [],
+  selectedPropertyId: null,
 
-  setProperties: (properties) => set({ properties }),
+  setProperties: (properties: Property[]) => set({ properties }),
+
+  setSelectedPropertyId: (propertyId: number | null) =>
+    set({ selectedPropertyId: propertyId }),
 
   fetchProperties: async () => {
     const { data: properties, error } = await supabase.from('properties')
       .select(`
-                *,
-                owner:owners(*),
-                invoices:invoices(*, invoiceItems:invoice_items(*, supplyItem:supply_items(*)))
-            `)
+        *,
+        owner:owners(*),
+        invoices:invoices(*, invoiceItems:invoice_items(*, supplyItem:supply_items(*)))
+      `)
 
     if (error) {
       console.error('Error fetching properties:', error)
