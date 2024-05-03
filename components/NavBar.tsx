@@ -12,7 +12,7 @@ export default function NavBar() {
 
   if (!isMobile) {
     return (
-      <div className="h-screen w-[250px] text-secondary text-xl border-r border-border">
+      <div className="md:mr-8 h-screen w-[250px] bg-white text-secondary text-xl border-r border-border">
         <ul className="border-t border-border mt-24">
           <div className="pl-8 pt-8">
             <li>
