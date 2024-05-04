@@ -1,8 +1,20 @@
+'use client'
+
 import CreateNewCta from '@/components/CreateNewCta'
 import InvoiceView from '@/components/InvoiceView'
 import PropertiesView from '@/components/PropertiesView'
+import { useStore } from '@/hooks/stores/useStore'
+import { useEffect } from 'react'
 
 export default function Home() {
+  const { properties, fetchProperties, selectedPropertyId } = useStore()
+
+  useEffect(() => {
+    if (properties.length === 0) {
+      fetchProperties()
+    }
+  }, [properties.length, fetchProperties])
+
   return (
     <main className="container bg-background h-screen">
       <div className="md:mt-16 flex-grow-0">
@@ -13,14 +25,20 @@ export default function Home() {
       </div>
 
       <span className="flex mt-9 items-center justify-between md:justify-normal">
-        <p className='md:w-1/3'>search bar</p>
+        <p className="md:w-1/3">search bar</p>
         <CreateNewCta whichOne="property" />
       </span>
 
-      <div className="flex flex-grow gap-8 mt-9 flex-col-reverse md:flex-row">
-        <PropertiesView />
+      <div className="flex flex-grow mt-9 flex-col-reverse md:flex-row">
+        <PropertiesView
+          properties={properties}
+          selectedPropertyId={selectedPropertyId}
+        />
 
-        <InvoiceView />
+        <InvoiceView
+          properties={properties}
+          selectedPropertyId={selectedPropertyId}
+        />
       </div>
     </main>
   )

@@ -1,7 +1,7 @@
 'use client'
 
 import clsx from 'clsx'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import {
   Table,
   TableBody,
@@ -11,36 +11,31 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useStore } from '@/hooks/stores/useStore'
+import { formatDateWithDay } from '@/lib/utils'
 import { Property } from '@/lib/definitions'
 
-function PropertiesView() {
-  const {
-    properties,
-    fetchProperties,
-    selectedPropertyId,
-    setSelectedPropertyId,
-  } = useStore()
+interface PropertiesViewProps {
+  properties: Property[]
+  selectedPropertyId: number | null
+}
 
-  useEffect(() => {
-    fetchProperties()
-  }, [fetchProperties])
+function PropertiesView({
+  properties,
+  selectedPropertyId,
+}: PropertiesViewProps) {
+  const { setSelectedPropertyId } = useStore()
 
-  const formatDate = (dateString: Date): string => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  }
-
-  const handleRowClick = (propertyId: number) => {
-    setSelectedPropertyId(propertyId)
-  }
+  const handleRowClick = useCallback(
+    (propertyId: number) => {
+      setSelectedPropertyId(propertyId)
+    },
+    [setSelectedPropertyId]
+  )
 
   console.log(properties)
   return (
-    <section className="rounded-2xl border p-4 md:w-7/12">
+    // mr-8 because dunno how to do in page.tsx
+    <section className="rounded-2xl border p-4 md:w-7/12 mr-8">
       <Table>
         <TableHeader>
           <TableRow className="flex w-full">
@@ -72,7 +67,7 @@ function PropertiesView() {
                 {property.invoices &&
                 property.invoices.length > 0 &&
                 property.invoices[0].last_modified
-                  ? formatDate(property.invoices[0].last_modified)
+                  ? formatDateWithDay(property.invoices[0].last_modified)
                   : 'No data'}
               </TableCell>
               <TableCell className="flex-grow flex-shrink w-1/3 text-right">
