@@ -4,9 +4,9 @@ import React, { useState } from 'react'
 import { useStore } from '@/hooks/stores/useStore'
 import { updateOwnerDetails } from '@/lib/supabase/ownerApi'
 import { Property } from '@/lib/definitions'
-import EditableField from './EditableField'
-import EditModeToggle from './EditModeToggle'
-import CreateNewCta from './CreateNewCta'
+import EditableField from '../EditableField'
+import EditModeToggle from '../EditModeToggle'
+import CreateNewCta from '../CreateNewCta'
 import InvoiceList from './InvoiceList'
 
 interface InvoiceViewProps {

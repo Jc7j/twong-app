@@ -32,7 +32,6 @@ function PropertiesView({
     [setSelectedPropertyId]
   )
 
-  console.log(properties)
   return (
     // mr-8 because dunno how to do in page.tsx
     <section className="rounded-2xl border p-4 md:w-7/12 mr-8">

@@ -2,18 +2,23 @@ import { supabase } from '@/lib/supabase/server'
 import { Property } from '@/lib/definitions'
 
 export async function fetchProperties(): Promise<Property[]> {
-  const { data: properties, error } = await supabase.from('properties').select(`
+  const { data: properties, error } = await supabase
+    .from('properties')
+    .select(
+      `
       *,
       owner:owners(*),
       invoices:invoices(*, invoiceItems:invoice_items(*, supplyItem:supply_items(*)))
-    `)
+    `
+    )
+    .order('name', { ascending: true })
 
   if (error) {
     console.error('Error fetching properties:', error)
     throw new Error(error.message)
   }
 
-  return properties.sort((a, b) => a.name.localeCompare(b.name))
+  return properties
 }
 
 export async function updatePropertyDetails(

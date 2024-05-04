@@ -37,4 +37,3 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 Todo:
 1. Ability to create multiple owners. Rn, all properties is tied to one owner.
-2. Failed to create invoice ERROR. It works but what do we want to return instead beacuse no data is returned

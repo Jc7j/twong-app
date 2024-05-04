@@ -1,10 +1,11 @@
 'use client'
 
-import CreateNewCta from '@/components/CreateNewCta'
-import InvoiceView from '@/components/InvoiceView'
-import PropertiesView from '@/components/PropertiesView'
-import { useStore } from '@/hooks/stores/useStore'
 import { useEffect } from 'react'
+
+import CreateNewCta from '@/components/CreateNewCta'
+import InvoiceView from '@/components/properties/InvoiceView'
+import PropertiesView from '@/components/properties/PropertiesView'
+import { useStore } from '@/hooks/stores/useStore'
 
 export default function Home() {
   const { properties, fetchProperties, selectedPropertyId } = useStore()
