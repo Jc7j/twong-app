@@ -13,7 +13,7 @@ import {
 import { useStore } from '@/hooks/stores/useStore'
 import { Property } from '@/lib/definitions'
 
-export default function PropertiesView() {
+function PropertiesView() {
   const {
     properties,
     fetchProperties,
@@ -43,7 +43,7 @@ export default function PropertiesView() {
     <section className="rounded-2xl border p-4 md:w-7/12">
       <Table>
         <TableHeader>
-          <TableRow className="flex w-full ">
+          <TableRow className="flex w-full">
             <TableHead className="flex-grow flex-shrink w-1/3">Name</TableHead>
             <TableHead className="flex-grow flex-shrink w-1/3 text-center">
               Last Modified
@@ -68,13 +68,17 @@ export default function PropertiesView() {
               <TableCell className="flex-grow flex-shrink w-1/3">
                 {property.name}
               </TableCell>
-              {property.invoices && (
-                <TableCell className="flex-grow flex-shrink w-1/3 text-center">
-                  {formatDate(property.invoices[0].last_modified)}
-                </TableCell>
-              )}
+              <TableCell className="flex-grow flex-shrink w-1/3 text-center">
+                {property.invoices &&
+                property.invoices.length > 0 &&
+                property.invoices[0].last_modified
+                  ? formatDate(property.invoices[0].last_modified)
+                  : 'No data'}
+              </TableCell>
               <TableCell className="flex-grow flex-shrink w-1/3 text-right">
-                {property.invoices && property.invoices[0].total}
+                {property.invoices && property.invoices.length > 0
+                  ? `$${property.invoices[0].total}`
+                  : 'No data'}
               </TableCell>
             </TableRow>
           ))}
@@ -83,3 +87,5 @@ export default function PropertiesView() {
     </section>
   )
 }
+
+export default React.memo(PropertiesView)

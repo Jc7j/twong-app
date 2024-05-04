@@ -1,7 +1,7 @@
 export interface Owner {
   readonly owner_id: number
-  readonly name: string
-  readonly email: string
+  name: string
+  email: string
   phone_number: string
 }
 
