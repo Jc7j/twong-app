@@ -6,10 +6,10 @@ import { useStore } from '@/hooks/stores/useStore'
 export default function InvoiceView() {
   const { properties, selectedPropertyId } = useStore()
   const selectedProperty = properties.find(
-    (p) => p.propertyId === selectedPropertyId
+    (p) => p.property_id === selectedPropertyId
   )
 
-  if (!selectedProperty) return <div>Select a property to see invoices.</div>
+  if (!selectedProperty) return <div className='rounded-2xl border p-4 md:w-4/12'>Select a property to see invoices.</div>
 
   return (
     <section className="rounded-2xl border p-4 md:w-4/12">
@@ -18,7 +18,7 @@ export default function InvoiceView() {
         <p>{selectedProperty.owner?.name}</p>
         <p>{selectedProperty.address}</p>
         <p>{selectedProperty.owner?.email}</p>
-        <p>{selectedProperty.owner?.phoneNumber}</p>
+        <p>{selectedProperty.owner?.phone_number}</p>
       </div>
     </section>
   )

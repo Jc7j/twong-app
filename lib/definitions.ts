@@ -1,13 +1,13 @@
 export interface Owner {
-  readonly ownerId: number
+  readonly owner_id: number
   readonly name: string
   readonly email: string
-  phoneNumber: string
+  phone_number: string
 }
 
 export interface Property {
-  readonly propertyId: number
-  readonly ownerId: number
+  readonly property_id: number
+  readonly owner_id: number
   name: string
   address: string
   owner?: Owner
@@ -15,30 +15,30 @@ export interface Property {
 }
 
 export interface SupplyItem {
-  readonly supplyId: number
+  readonly supply_id: number
   name: string
   price: number
-  qtyPerPackage: number
+  qty_per_package: number
   link?: string
   multiplier: number
 }
 
 export interface Invoice {
-  readonly invoiceId: number
-  readonly propertyId: number
-  invoiceMonth: Date
-  lastModified: Date
-  managementFee: number
+  readonly invoice_id: number
+  readonly property_id: number
+  invoice_month: Date
+  last_modified: Date
+  management_fee: number
   total: number
-  invoiceItems?: InvoiceItem[]
+  invoice_items?: InvoiceItem[]
 }
 
 export interface InvoiceItem {
-  readonly itemId: number
-  readonly invoiceId: number
-  readonly supplyId: number
+  readonly item_id: number
+  readonly invoice_id: number
+  readonly supply_id: number
   quantity: number
-  supplyItem?: SupplyItem
+  supply_item?: SupplyItem
 }
 
 export interface AppState {

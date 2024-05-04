@@ -59,18 +59,18 @@ export default function PropertiesView() {
             <TableRow
               className={clsx(
                 'flex w-full text-primary transition-colors hover:bg-accent',
-                selectedPropertyId === property.propertyId &&
+                selectedPropertyId === property.property_id &&
                   'bg-accent text-background font-medium'
               )}
-              key={property.propertyId}
-              onClick={() => handleRowClick(property.propertyId)}
+              key={property.property_id}
+              onClick={() => handleRowClick(property.property_id)}
             >
               <TableCell className="flex-grow flex-shrink w-1/3">
                 {property.name}
               </TableCell>
               {property.invoices && (
                 <TableCell className="flex-grow flex-shrink w-1/3 text-center">
-                  {formatDate(property.invoices[0].lastModified)}
+                  {formatDate(property.invoices[0].last_modified)}
                 </TableCell>
               )}
               <TableCell className="flex-grow flex-shrink w-1/3 text-right">
