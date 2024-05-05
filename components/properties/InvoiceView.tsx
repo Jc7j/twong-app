@@ -1,29 +1,25 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useStore } from '@/hooks/stores/useStore'
+
 import { updateOwnerDetails } from '@/lib/supabase/ownerApi'
-import { Property } from '@/lib/definitions'
-import EditableField from '../EditableField'
-import EditModeToggle from '../EditModeToggle'
+import { EditableField } from '../EditableField'
+import { EditModeToggle } from '../EditModeToggle'
 import CreateNewCta from '../CreateNewCta'
-import InvoiceList from './InvoiceList'
+import { InvoiceList } from './InvoiceList'
+import { usePropertiesStore } from '@/hooks/stores/usePropertiesStore'
 
-interface InvoiceViewProps {
-  properties: Property[]
-  selectedPropertyId: number | null
-}
-
-export default function InvoiceView({
-  properties,
-  selectedPropertyId,
-}: InvoiceViewProps) {
-  const { updatePropertyDetails, fetchProperties } = useStore()
+export default function InvoiceView() {
+  const {
+    properties,
+    updatePropertyDetails,
+    fetchProperties,
+    selectedPropertyId,
+  } = usePropertiesStore()
 
   const selectedProperty = properties.find(
     (p) => p.property_id === selectedPropertyId
   )
-
   const [isEditing, setIsEditing] = useState(false)
 
   const handleSave = async () => {
@@ -59,7 +55,7 @@ export default function InvoiceView({
     <section className="rounded-2xl border p-4 md:w-5/12">
       <EditableField
         value={selectedProperty.name ?? ''}
-        onChange={(value) => (selectedProperty.name = value)}
+        onChange={(value: string) => (selectedProperty.name = value)}
         isEditing={isEditing}
         as="h1"
         className="text-2xl font-medium"
@@ -67,22 +63,24 @@ export default function InvoiceView({
       <div className="mt-5 text-primary ">
         <EditableField
           value={selectedProperty.owner?.name ?? ''}
-          onChange={(value) => (selectedProperty.owner!.name = value)}
+          onChange={(value: string) => (selectedProperty.owner!.name = value)}
           isEditing={isEditing}
         />
         <EditableField
           value={selectedProperty.address}
-          onChange={(value) => (selectedProperty.address = value)}
+          onChange={(value: string) => (selectedProperty.address = value)}
           isEditing={isEditing}
         />
         <EditableField
           value={selectedProperty.owner?.email ?? ''}
-          onChange={(value) => (selectedProperty.owner!.email = value)}
+          onChange={(value: string) => (selectedProperty.owner!.email = value)}
           isEditing={isEditing}
         />
         <EditableField
           value={selectedProperty.owner?.phone_number ?? ''}
-          onChange={(value) => (selectedProperty.owner!.phone_number = value)}
+          onChange={(value: string) =>
+            (selectedProperty.owner!.phone_number = value)
+          }
           isEditing={isEditing}
         />
       </div>

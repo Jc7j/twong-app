@@ -4,13 +4,15 @@ import { useStore } from '@/hooks/stores/useStore'
 import { createNewProperty } from '@/lib/supabase/propertyApi'
 import { createInvoiceForProperty } from '@/lib/supabase/invoiceApi'
 import { addSupplyItem } from '@/lib/supabase/suppliesApi'
+import { usePropertiesStore } from '@/hooks/stores/usePropertiesStore'
 
 export default function CreateNewCta({
   whichOne,
 }: {
   whichOne: 'property' | 'invoice' | 'supplyItem'
 }) {
-  const { selectedPropertyId, addNewInvoiceToProperty } = useStore()
+  const { addNewInvoiceToProperty } = useStore()
+  const { selectedPropertyId } = usePropertiesStore()
 
   async function handleCreateInvoice() {
     if (!selectedPropertyId) {

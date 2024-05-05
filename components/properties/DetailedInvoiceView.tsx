@@ -1,4 +1,6 @@
-import React from 'react'
+'use client'
+
+import React, { useState } from 'react'
 import { Invoice, Property } from '@/lib/definitions' // Assuming these are defined in your definitions file
 import {
   Dialog,
@@ -6,7 +8,12 @@ import {
   DialogHeader,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { formatDate, formatDateWithTime } from '@/lib/utils'
+import { formatDateToISO, formatDateWithTime } from '@/lib/utils'
+import { updateInvoiceMonth } from '@/lib/supabase/invoiceApi'
+import { EditableField } from '../EditableField'
+import { EditModeToggle } from '../EditModeToggle'
+import { monthYearSchema } from '@/lib/schemas'
+import { usePropertiesStore } from '@/hooks/stores/usePropertiesStore'
 
 interface DetailedInvoiceViewProps {
   invoice: Invoice
@@ -15,18 +22,55 @@ interface DetailedInvoiceViewProps {
   onOpenChange: (isOpen: boolean) => void
 }
 
-const DetailedInvoiceView: React.FC<DetailedInvoiceViewProps> = ({
+export function DetailedInvoiceView({
   invoice,
   property,
   isOpen,
   onOpenChange,
-}) => {
+}: DetailedInvoiceViewProps) {
+  const { fetchProperties } = usePropertiesStore()
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedMonth, setEditedMonth] = useState(() => {
+    const date = new Date(invoice.invoice_month)
+    const monthName = date.toLocaleString('default', { month: 'long' })
+    const year = date.getFullYear()
+    return `${monthName} ${year}`
+  })
+
+  async function handleSave() {
+    const validationResult = monthYearSchema.safeParse(editedMonth)
+    if (validationResult.success) {
+      const isoDate = formatDateToISO(editedMonth)
+      try {
+        setIsEditing(false)
+        await updateInvoiceMonth(invoice.invoice_id, isoDate)
+      } catch (error) {
+        console.error('Error updating invoice:', error)
+      }
+      await fetchProperties()
+    } else {
+      alert(validationResult.error.message)
+    }
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <h2 className="text-2xl font-medium">{property.name}</h2>
-          <p className="text-sm">{formatDate(invoice.invoice_month)}</p>
+          <span>
+            <EditableField
+              className="text-sm"
+              onChange={(value: string) => setEditedMonth(value)}
+              isEditing={isEditing}
+              value={editedMonth}
+            />
+            <EditModeToggle
+              isEditing={isEditing}
+              setIsEditing={setIsEditing}
+              handleSave={handleSave}
+            />
+          </span>
           <div className="text-sm text-primary mt-5">
             <p>{property.owner?.name}</p>
             <p>{property.address}</p>
@@ -59,5 +103,3 @@ const DetailedInvoiceView: React.FC<DetailedInvoiceViewProps> = ({
     </Dialog>
   )
 }
-
-export default DetailedInvoiceView

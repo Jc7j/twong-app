@@ -44,3 +44,23 @@ export function formatDateWithTime(dateInput: Date): string {
 
   return `${formattedDate} ${formattedTime} pst`
 }
+
+export function formatDateToISO(monthYear: string): string {
+  const [month, year] = monthYear.split(' ')
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ]
+  const monthIndex = months.indexOf(month) + 1 // Get month as a number
+  return `${year}-${monthIndex.toString().padStart(2, '0')}-05` // Formats as "YYYY-MM-01"
+}

@@ -11,8 +11,8 @@ import {
   TableRow,
 } from '../ui/table'
 import { SupplyItem } from '@/lib/definitions'
-import EditModeToggle from '../EditModeToggle'
-import EditableField from '../EditableField'
+import { EditModeToggle } from '../EditModeToggle'
+import { EditableField } from '../EditableField'
 import clsx from 'clsx'
 
 export default function SuppliesView() {

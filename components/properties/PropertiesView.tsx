@@ -10,20 +10,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { useStore } from '@/hooks/stores/useStore'
 import { formatDateWithDay } from '@/lib/utils'
 import { Property } from '@/lib/definitions'
+import { usePropertiesStore } from '@/hooks/stores/usePropertiesStore'
 
-interface PropertiesViewProps {
-  properties: Property[]
-  selectedPropertyId: number | null
-}
-
-function PropertiesView({
-  properties,
-  selectedPropertyId,
-}: PropertiesViewProps) {
-  const { setSelectedPropertyId } = useStore()
+function PropertiesView() {
+  const {
+    properties,
+    fetchProperties,
+    selectedPropertyId,
+    setSelectedPropertyId,
+  } = usePropertiesStore()
 
   const handleRowClick = useCallback(
     (propertyId: number) => {
@@ -31,6 +28,12 @@ function PropertiesView({
     },
     [setSelectedPropertyId]
   )
+
+  useEffect(() => {
+    if (properties.length === 0) {
+      fetchProperties()
+    }
+  }, [properties.length, fetchProperties])
 
   return (
     // mr-8 because dunno how to do in page.tsx

@@ -8,13 +8,13 @@ interface EditableFieldProps {
   className?: string
 }
 
-const EditableField: React.FC<EditableFieldProps> = ({
+export function EditableField({
   value,
   onChange,
   isEditing,
   as: Component = 'p',
   className = '',
-}) => {
+}: EditableFieldProps) {
   const [editValue, setEditValue] = useState(value)
 
   useEffect(() => {
@@ -40,5 +40,3 @@ const EditableField: React.FC<EditableFieldProps> = ({
     <Component className={`${className} mt-1`}>{value}</Component>
   )
 }
-
-export default EditableField

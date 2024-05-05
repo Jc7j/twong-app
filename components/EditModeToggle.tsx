@@ -6,11 +6,11 @@ interface EditModeToggleProps {
   handleSave: () => void
 }
 
-const EditModeToggle: React.FC<EditModeToggleProps> = ({
+export function EditModeToggle({
   isEditing,
   setIsEditing,
   handleSave,
-}) => {
+}: EditModeToggleProps) {
   return isEditing ? (
     <button
       onClick={handleSave}
@@ -21,11 +21,9 @@ const EditModeToggle: React.FC<EditModeToggleProps> = ({
   ) : (
     <button
       onClick={() => setIsEditing(true)}
-      className="text-accent underline underline-offset-2 text-sm"
+      className="text-accent underline underline-offset-2 text-sm focus:outline-none"
     >
       Edit
     </button>
   )
 }
-
-export default EditModeToggle

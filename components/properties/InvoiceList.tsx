@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { useStore } from '@/hooks/stores/useStore'
 import { Invoice } from '@/lib/definitions'
-import DetailedInvoiceView from './DetailedInvoiceView' // Adjust the path as needed
+import { DetailedInvoiceView } from './DetailedInvoiceView'
 import { formatDate } from '@/lib/utils'
 import { useDialogOpen } from '@/hooks/useDialogOpen'
+import { usePropertiesStore } from '@/hooks/stores/usePropertiesStore'
 
-const InvoiceList: React.FC = () => {
-  const { properties, selectedPropertyId } = useStore()
+export function InvoiceList() {
+  const { properties, selectedPropertyId } = usePropertiesStore()
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
   const { open, setOpen } = useDialogOpen()
 
@@ -69,5 +69,3 @@ const InvoiceList: React.FC = () => {
     </div>
   )
 }
-
-export default InvoiceList
