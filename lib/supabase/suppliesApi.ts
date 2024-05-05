@@ -18,8 +18,8 @@ export async function fetchSupplyItems(page: number, limit: number) {
   return data
 }
 
-export async function addSupplyItem(item: SupplyItem) {
-  const { data, error } = await supabase.from('supply_items').insert([item])
+export async function addSupplyItem() {
+  const { data, error } = await supabase.from('supply_items').insert([{}])
   if (error) throw new Error('Error adding supply item: ' + error.message)
   return data
 }

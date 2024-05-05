@@ -50,24 +50,25 @@ export const useSupplyStore = create<SupplyStoreState>((set, get) => ({
     }
   },
 
-  addSupplyItem: async (item: SupplyItem) => {
+  addSupplyItem: async () => {
     try {
-      const data = await addSupplyItem(item)
-      if (data) {
-        set({ supplyItems: [...get().supplyItems, data[0]] })
+      const addedItem = await addSupplyItem()
+      
+      if (addedItem) {
+        set(state => ({
+          supplyItems: [...state.supplyItems, addedItem]
+        }));
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   },
-
   updateSupplyItem: async (supply_id: number, updates: Partial<SupplyItem>) => {
     try {
       const data = await updateSupplyItem(supply_id, updates)
       if (data) {
         const newItems = get().supplyItems.map((item) =>
-          // @ts-ignore its an object, but we need to fix typing for the supabase stuff though
-          item.supply_id === supply_id ? { ...item, ...data } : item
+          item.supply_id === supply_id ? { ...item } : item
         )
         set({ supplyItems: newItems })
       }

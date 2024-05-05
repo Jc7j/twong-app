@@ -80,7 +80,7 @@ const handleSave = async () => {
   }
 
   return (
-    <section className="rounded-2xl border p-4 w-2/3 overflow-x-auto mt-8">
+    <section className="rounded-2xl border p-4 w-full overflow-x-auto mt-8">
       <span className="flex justify-between">
         <EditModeToggle
           isEditing={isEditing}

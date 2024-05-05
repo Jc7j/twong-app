@@ -3,11 +3,12 @@
 import { useStore } from '@/hooks/stores/useStore'
 import { createNewProperty } from '@/lib/supabase/propertyApi'
 import { createInvoiceForProperty } from '@/lib/supabase/invoiceApi'
+import { addSupplyItem } from '@/lib/supabase/suppliesApi'
 
 export default function CreateNewCta({
   whichOne,
 }: {
-  whichOne: 'property' | 'invoice'
+  whichOne: 'property' | 'invoice' | 'supplyItem'
 }) {
   const { selectedPropertyId, addNewInvoiceToProperty } = useStore()
 
@@ -19,7 +20,6 @@ export default function CreateNewCta({
 
     try {
       const newInvoice = await createInvoiceForProperty(selectedPropertyId)
-      console.log('Invoice created:', newInvoice)
       addNewInvoiceToProperty(newInvoice, selectedPropertyId)
     } catch (error) {
       console.error('Failed to create invoice:', error)
@@ -44,6 +44,17 @@ export default function CreateNewCta({
         onClick={handleCreateInvoice}
       >
         Create new invoice
+      </button>
+    )
+  }
+
+  if (whichOne === 'supplyItem') {
+    return (
+      <button
+        className="px-5 py-3 text-sm shadow border bg-accent text-background rounded-lg"
+        onClick={addSupplyItem}
+      >
+        Create new item
       </button>
     )
   }

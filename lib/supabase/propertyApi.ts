@@ -46,6 +46,5 @@ export async function createNewProperty() {
     return
   }
 
-  console.log('Property created with default values:', data)
   return data
 }
