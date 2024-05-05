@@ -37,13 +37,13 @@ function PropertiesView({
     <section className="rounded-2xl border p-4 md:w-7/12 mr-8">
       <Table>
         <TableHeader>
-          <TableRow className="flex w-full">
+          <TableRow className="flex w-full text-base">
             <TableHead className="flex-grow flex-shrink w-1/3">Name</TableHead>
             <TableHead className="flex-grow flex-shrink w-1/3 text-center">
               Last Modified
             </TableHead>
             <TableHead className="flex-grow flex-shrink w-1/3 text-right">
-              Last Modified Month Total
+              That Month Total
             </TableHead>
           </TableRow>
         </TableHeader>

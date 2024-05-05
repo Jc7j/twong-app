@@ -46,3 +46,8 @@ export interface AppState {
   setProperties: (properties: Property[]) => void
   fetchProperties: () => Promise<void>
 }
+
+export type DialogOpen = {
+  open: boolean
+  setOpen: (open: boolean) => void
+}

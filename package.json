@@ -10,6 +10,7 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css}\""
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.0.5",
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.43.0",
     "class-variance-authority": "^0.7.0",

@@ -23,6 +23,7 @@ export default function InvoiceView({
   const selectedProperty = properties.find(
     (p) => p.property_id === selectedPropertyId
   )
+
   const [isEditing, setIsEditing] = useState(false)
 
   const handleSave = async () => {
@@ -63,7 +64,7 @@ export default function InvoiceView({
         as="h1"
         className="text-2xl font-medium"
       />
-      <div className="mt-5 text-primary text-sm">
+      <div className="mt-5 text-primary ">
         <EditableField
           value={selectedProperty.owner?.name ?? ''}
           onChange={(value) => (selectedProperty.owner!.name = value)}

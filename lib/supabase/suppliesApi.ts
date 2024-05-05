@@ -32,7 +32,7 @@ export async function updateSupplyItem(
     .from('supply_items')
     .update(updates)
     .match({ supply_id })
-    
+
   if (error) throw new Error('Error updating supply item: ' + error.message)
   return data
 }

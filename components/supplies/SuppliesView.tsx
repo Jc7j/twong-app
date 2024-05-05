@@ -49,23 +49,24 @@ export default function SuppliesView() {
     setEditableItems(updatedItems)
   }
 
-const handleSave = async () => {
-  const updatePromises = editableItems.map(item => updateSupplyItem(item.supply_id, {
-    name: item.name,
-    link: item.link,
-    price: parseFloat(item.price as unknown as string),
-    qty_per_package: parseInt(item.qty_per_package as unknown as string),
-  }));
+  const handleSave = async () => {
+    const updatePromises = editableItems.map((item) =>
+      updateSupplyItem(item.supply_id, {
+        name: item.name,
+        link: item.link,
+        price: parseFloat(item.price as unknown as string),
+        qty_per_package: parseInt(item.qty_per_package as unknown as string),
+      })
+    )
 
-  try {
-    await Promise.all(updatePromises);
-    setIsEditing(false);
-    await loadSupplyItems(currentPage);
-  } catch (error) {
-    console.error('Failed to save updates:', error);
+    try {
+      await Promise.all(updatePromises)
+      setIsEditing(false)
+      await loadSupplyItems(currentPage)
+    } catch (error) {
+      console.error('Failed to save updates:', error)
+    }
   }
-}
-
 
   const handleDelete = async (supply_id: number) => {
     await deleteSupplyItem(supply_id)
@@ -90,14 +91,20 @@ const handleSave = async () => {
         <div>
           <button
             onClick={handlePrevPage}
-            className={clsx("text-accent underline underline-offset-2 text-sm mr-3", currentPage === 0 && 'text-secondary')}
+            className={clsx(
+              'text-accent underline underline-offset-2 text-sm mr-3',
+              currentPage === 0 && 'text-secondary'
+            )}
             disabled={currentPage === 0}
           >
             Previous
           </button>
           <button
             onClick={handleNextPage}
-            className={clsx("text-accent underline underline-offset-2 text-sm", !moreAvailable && 'text-secondary')}
+            className={clsx(
+              'text-accent underline underline-offset-2 text-sm',
+              !moreAvailable && 'text-secondary'
+            )}
             disabled={!moreAvailable}
           >
             Next

@@ -27,7 +27,7 @@ type SupplyStoreState = {
 export const useSupplyStore = create<SupplyStoreState>((set, get) => ({
   supplyItems: [],
   currentPage: 0,
-  itemsPerPage: 30,
+  itemsPerPage: 20,
   moreAvailable: true,
   setMoreAvailable: (moreAvailable: boolean) => set({ moreAvailable }),
 
@@ -53,14 +53,14 @@ export const useSupplyStore = create<SupplyStoreState>((set, get) => ({
   addSupplyItem: async () => {
     try {
       const addedItem = await addSupplyItem()
-      
+
       if (addedItem) {
-        set(state => ({
-          supplyItems: [...state.supplyItems, addedItem]
-        }));
+        set((state) => ({
+          supplyItems: [...state.supplyItems, addedItem],
+        }))
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   },
   updateSupplyItem: async (supply_id: number, updates: Partial<SupplyItem>) => {
