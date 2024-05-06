@@ -1,14 +1,14 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Invoice, Property } from '@/lib/definitions' // Assuming these are defined in your definitions file
+import React, { useEffect, useState } from 'react'
+import { Invoice, Property } from '@/lib/definitions'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { formatDateToISO, formatDateWithTime } from '@/lib/utils'
+import { formatDate, formatDateToISO, formatDateWithTime } from '@/lib/utils'
 import { updateInvoiceMonth } from '@/lib/supabase/invoiceApi'
 import { EditableField } from '../EditableField'
 import { EditModeToggle } from '../EditModeToggle'
@@ -25,16 +25,22 @@ export function DetailedInvoiceView({
   invoice,
   property,
 }: DetailedInvoiceViewProps) {
-  const { fetchProperties } = usePropertiesStore()
+  const { selectedProperty, fetchProperty } = usePropertiesStore()
   const { open, setOpen } = useDialogInvoiceOpen()
 
   const [isEditing, setIsEditing] = useState(false)
-  const [editedMonth, setEditedMonth] = useState(() => {
-    const date = new Date(invoice.invoice_month)
-    const monthName = date.toLocaleString('default', { month: 'long' })
-    const year = date.getFullYear()
-    return `${monthName} ${year}`
-  })
+  const [editedMonth, setEditedMonth] = useState('')
+
+  useEffect(() => {
+    if (invoice) {
+      const formattedMonth = formatDate(new Date(invoice.invoice_month))
+      setEditedMonth(formattedMonth)
+    }
+  }, [invoice])
+
+  if (!selectedProperty) {
+    return null
+  }
 
   async function handleSave() {
     const validationResult = monthYearSchema.safeParse(editedMonth)
@@ -42,23 +48,27 @@ export function DetailedInvoiceView({
       const isoDate = formatDateToISO(editedMonth)
       try {
         setIsEditing(false)
-        await updateInvoiceMonth(invoice.invoice_id, isoDate)
+        const newUpdatedMonth = await updateInvoiceMonth(
+          invoice.invoice_id,
+          isoDate
+        )
+        setEditedMonth(formatDate(newUpdatedMonth))
+        await fetchProperty(selectedProperty?.property_id as number)
       } catch (error) {
         console.error('Error updating invoice:', error)
       }
-      await fetchProperties()
     } else {
       alert(validationResult.error.message)
     }
   }
 
-  function handleClose() {
-    // @TODO SAVE CHANGES AND FETCH PROPERTIES AGAIN TO DISPLAY NEW DATA ON THE VIEWS
+  async function handleClose() {
+    await fetchProperty(selectedProperty?.property_id as number)
     setOpen(false)
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <h2 className="text-2xl font-medium">{property.name}</h2>
@@ -101,9 +111,17 @@ export function DetailedInvoiceView({
           </span>
         </DialogFooter>
         <hr />
-        <p className="text-sm text-secondary text-center">
-          Last Modified {formatDateWithTime(invoice.last_modified)}
-        </p>
+        <span className="flex justify-between items-end">
+          <button
+            onClick={handleClose}
+            className="mt-4 px-3 py-1 bg-accent text-background rounded text-sm"
+          >
+            Save invoice changes
+          </button>
+          <p className="text-sm text-secondary text-center">
+            Last Modified {formatDateWithTime(invoice.last_modified)}
+          </p>
+        </span>
       </DialogContent>
     </Dialog>
   )

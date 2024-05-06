@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import {
   fetchProperties,
+  fetchPropertyById,
   updatePropertyDetails,
 } from '@/lib/supabase/propertyApi'
 import { Property } from '@/lib/definitions'
@@ -8,8 +9,9 @@ import { Property } from '@/lib/definitions'
 export interface PropertiesStoreState {
   selectedProperty: Property | null
   properties: Property[]
-  setSelectedProperty: (propertyId: number | null) => void
+  setSelectedProperty: (propertyId: number) => void
   fetchProperties: () => Promise<void>
+  fetchProperty: (propertyId: number) => void
   updatePropertyDetails: (
     propertyId: number,
     updates: Partial<Property>
@@ -29,6 +31,15 @@ export const usePropertiesStore = create<PropertiesStoreState>((set, get) => ({
     set({
       selectedProperty: selected,
     })
+  },
+
+  fetchProperty: async (propertyId) => {
+    try {
+      const property = await fetchPropertyById(propertyId)
+      set({ selectedProperty: property })
+    } catch (error) {
+      console.error('Failed to fetch property:', error)
+    }
   },
 
   fetchProperties: async () => {

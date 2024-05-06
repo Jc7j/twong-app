@@ -17,10 +17,10 @@ export async function fetchOwnerByPropertyId(
   return owners
 }
 
-export const updateOwnerDetails = async (
+export async function updateOwnerDetails(
   ownerId: number,
   ownerUpdates: Partial<Owner>
-) => {
+) {
   const { data, error } = await supabase
     .from('owners')
     .update(ownerUpdates)

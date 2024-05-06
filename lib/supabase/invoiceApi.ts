@@ -43,7 +43,7 @@ export async function createNewInvoice(property_id: number): Promise<Invoice> {
 export async function updateInvoiceMonth(
   invoiceId: number,
   invoiceMonth: string
-) {
+): Promise<Invoice['invoice_month']> {
   const { data, error } = await supabase
     .from('invoices')
     .update({
@@ -51,9 +51,12 @@ export async function updateInvoiceMonth(
       last_modified: new Date(),
     })
     .match({ invoice_id: invoiceId })
+    .select()
 
   if (error) {
     console.error('Error updating invoice:', error.message)
     throw new Error(error.message)
   }
+
+  return data[0].invoice_month
 }

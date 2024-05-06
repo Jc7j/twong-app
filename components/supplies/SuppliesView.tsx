@@ -39,17 +39,17 @@ export default function SuppliesView() {
     loadSupplyItems(currentPage)
   }, [currentPage])
 
-  const handleEditField = (
+  function handleEditField(
     index: number,
     field: keyof SupplyItem,
     value: string
-  ) => {
+  ) {
     const updatedItems = [...editableItems]
     updatedItems[index] = { ...updatedItems[index], [field]: value }
     setEditableItems(updatedItems)
   }
 
-  const handleSave = async () => {
+  async function handleSave() {
     const updatePromises = editableItems.map((item) =>
       updateSupplyItem(item.supply_id, {
         name: item.name,
@@ -68,13 +68,15 @@ export default function SuppliesView() {
     }
   }
 
-  const handleDelete = async (supply_id: number) => {
+  async function handleDelete(supply_id: number) {
     await deleteSupplyItem(supply_id)
     await loadSupplyItems(currentPage)
   }
 
-  const handleNextPage = () => setCurrentPage(currentPage + 1)
-  const handlePrevPage = () => {
+  function handleNextPage() {
+    setCurrentPage(currentPage + 1)
+  }
+  function handlePrevPage() {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1)
     }

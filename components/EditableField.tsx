@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ElementType } from 'react'
 
 interface EditableFieldProps {
-  value: string
+  value: any
   onChange: (newValue: string) => void
   isEditing: boolean
   as?: ElementType
@@ -21,7 +21,7 @@ export function EditableField({
     setEditValue(value)
   }, [value])
 
-  const handleBlur = () => {
+  function handleBlur() {
     onChange(editValue)
     // Reset editValue to value on blur to discard uncommitted changes
     setEditValue(value)

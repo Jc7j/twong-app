@@ -21,10 +21,31 @@ export async function fetchProperties(): Promise<Property[]> {
   return properties
 }
 
+export async function fetchPropertyById(propertyId: number): Promise<Property> {
+  const { data, error } = await supabase
+    .from('properties')
+    .select(
+      `
+      *,
+      owner:owners(*),
+      invoices:invoices(*, invoiceItems:invoice_items(*, supplyItem:supply_items(*)))
+    `
+    )
+    .eq('property_id', propertyId)
+    .single()
+
+  if (error) {
+    console.error('Error fetching property by ID:', error)
+    throw new Error(error.message)
+  }
+
+  return data
+}
+
 export async function updatePropertyDetails(
   propertyId: number,
   updates: Partial<Property>
-): Promise<void> {
+) {
   const { data, error } = await supabase
     .from('properties')
     .update(updates)
@@ -35,7 +56,9 @@ export async function updatePropertyDetails(
     throw new Error(error.message)
   }
 
-  console.log('Updated property data:', data)
+  if (data) {
+    return data
+  }
 }
 
 export async function createNewProperty({

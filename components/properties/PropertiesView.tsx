@@ -27,8 +27,9 @@ function PropertiesView() {
     }
   }, [properties.length, fetchProperties])
 
+  // @TODO: TOTAL isnt bugged because it takes it from last modified not current month
+  // @TODO: Change COLUMNS
   return (
-    // mr-8 because dunno how to do in page.tsx
     <section className="md:w-7/12 mr-8">
       <span className="flex items-center justify-between ">
         <p className="md:w-1/3">search bar</p>

@@ -13,7 +13,7 @@ import { useInvoicesStore } from '@/hooks/stores/useInvoiceStore'
 import { createNewInvoice } from '@/lib/supabase/invoiceApi'
 
 export default function InvoiceView() {
-  const { selectedProperty, updatePropertyDetails, fetchProperties } =
+  const { selectedProperty, updatePropertyDetails, fetchProperty } =
     usePropertiesStore()
 
   const { selectedInvoice, setSelectedInvoice } = useInvoicesStore()
@@ -36,7 +36,7 @@ export default function InvoiceView() {
         email: selectedProperty.owner.email,
         phone_number: selectedProperty.owner.phone_number,
       })
-      await fetchProperties()
+      await fetchProperty(selectedProperty.property_id)
     } catch (error) {
       console.error('Failed to update:', error)
     }
