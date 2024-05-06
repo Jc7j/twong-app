@@ -6,9 +6,11 @@ import {
 import { Property } from '@/lib/definitions'
 
 export interface PropertiesStoreState {
+  selectedProperty: Property | null
   properties: Property[]
   selectedPropertyId: number | null
   setSelectedPropertyId: (propertyId: number | null) => void
+  setSelectedProperty: (propertyId: number | null) => void
   fetchProperties: () => Promise<void>
   updatePropertyDetails: (
     propertyId: number,
@@ -16,7 +18,8 @@ export interface PropertiesStoreState {
   ) => Promise<void>
 }
 
-export const usePropertiesStore = create<PropertiesStoreState>((set) => ({
+export const usePropertiesStore = create<PropertiesStoreState>((set, get) => ({
+  selectedProperty: null,
   properties: [],
   selectedPropertyId: null,
 
@@ -24,6 +27,17 @@ export const usePropertiesStore = create<PropertiesStoreState>((set) => ({
 
   setSelectedPropertyId: (propertyId: number | null) =>
     set({ selectedPropertyId: propertyId }),
+
+  setSelectedProperty: () => {
+    const {properties, selectedPropertyId} = get()
+    const selected = properties.find(
+      (p) => p.property_id === selectedPropertyId
+    )
+
+    set({
+      selectedProperty: selected
+    })
+  },
 
   fetchProperties: async () => {
     try {

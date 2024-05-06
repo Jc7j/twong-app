@@ -19,14 +19,14 @@ function PropertiesView() {
     properties,
     fetchProperties,
     selectedPropertyId,
-    setSelectedPropertyId,
+    setSelectedProperty,
   } = usePropertiesStore()
 
   const handleRowClick = useCallback(
     (propertyId: number) => {
-      setSelectedPropertyId(propertyId)
+      setSelectedProperty(propertyId)
     },
-    [setSelectedPropertyId]
+    [setSelectedProperty]
   )
 
   useEffect(() => {

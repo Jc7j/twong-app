@@ -1,8 +1,9 @@
 import CreateNewCta from '@/components/CreateNewCta'
-import InvoiceView from '@/components/properties/InvoiceView'
+import InvoicesView from '@/components/properties/InvoicesView'
 import PropertiesView from '@/components/properties/PropertiesView'
 
 export default function Home() {
+  
   return (
     <main className="container bg-background h-screen">
       <div className="md:mt-16 flex-grow-0">
@@ -20,7 +21,7 @@ export default function Home() {
       <div className="flex flex-grow mt-9 flex-col-reverse md:flex-row">
         <PropertiesView />
 
-        <InvoiceView />
+        <InvoicesView />
       </div>
     </main>
   )
