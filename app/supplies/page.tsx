@@ -1,4 +1,4 @@
-import CreateNewCta from '@/components/CreateNewCta'
+// import CreateNewCta from '@/components/CreateNewCta'
 import SuppliesView from '@/components/supplies/SuppliesView'
 
 export default function Supplies() {
@@ -9,7 +9,7 @@ export default function Supplies() {
       </div>
 
       <span className="md:mt-8 items-center">
-        <CreateNewCta whichOne="supplyItem" />
+        {/* <CreateNewCta whichOne="supplyItem" /> */}
       </span>
 
       <SuppliesView />

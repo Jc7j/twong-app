@@ -28,14 +28,12 @@ export const usePropertiesStore = create<PropertiesStoreState>((set, get) => ({
   setSelectedPropertyId: (propertyId: number | null) =>
     set({ selectedPropertyId: propertyId }),
 
-  setSelectedProperty: () => {
-    const {properties, selectedPropertyId} = get()
-    const selected = properties.find(
-      (p) => p.property_id === selectedPropertyId
-    )
+  setSelectedProperty: (propertyId) => {
+    const { properties } = get()
+    const selected = properties.find((p) => p.property_id === propertyId)
 
     set({
-      selectedProperty: selected
+      selectedProperty: selected,
     })
   },
 

@@ -24,7 +24,7 @@ export function EditableField({
   const handleBlur = () => {
     onChange(editValue)
     // Reset editValue to value on blur to discard uncommitted changes
-    // setEditValue(value);
+    setEditValue(value)
   }
 
   return isEditing ? (

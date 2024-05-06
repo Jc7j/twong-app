@@ -38,12 +38,21 @@ export async function updatePropertyDetails(
   console.log('Updated property data:', data)
 }
 
-export async function createNewProperty() {
-  const { data, error } = await supabase.from('properties').insert([{}])
+export async function createNewProperty({
+  name,
+  address,
+}: {
+  name: string
+  address: string
+}) {
+  const { data, error } = await supabase.from('properties').insert({
+    name: name,
+    address: address,
+  })
 
   if (error) {
-    console.error('Error inserting property with default values:', error)
-    return
+    console.error('Error inserting new property:', error)
+    throw new Error('Failed to create new property')
   }
 
   return data

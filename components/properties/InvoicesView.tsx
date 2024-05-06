@@ -1,23 +1,19 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { updateOwnerDetails } from '@/lib/supabase/ownerApi'
 import { EditableField } from '../EditableField'
 import { EditModeToggle } from '../EditModeToggle'
-import CreateNewCta from '../CreateNewCta'
 import { usePropertiesStore } from '@/hooks/stores/usePropertiesStore'
-import { Invoice } from '@/lib/definitions' // Assuming this is correctly defined
+import { Invoice } from '@/lib/definitions'
 import { DetailedInvoiceView } from './DetailedInvoiceView'
 import { formatDate } from '@/lib/utils'
 import { useDialogOpen } from '@/hooks/useDialogOpen'
 import { useInvoicesStore } from '@/hooks/stores/useInvoiceStore'
 
 export default function InvoiceView() {
-  const {
-    selectedProperty,
-    updatePropertyDetails,
-    fetchProperties,
-  } = usePropertiesStore()
+  const { selectedProperty, updatePropertyDetails, fetchProperties } =
+    usePropertiesStore()
 
   const { selectedInvoice, setSelectedInvoice } = useInvoicesStore()
   const { open, setOpen } = useDialogOpen()
@@ -98,9 +94,7 @@ export default function InvoiceView() {
         />
       </div>
 
-      <div className="my-2">
-        <CreateNewCta whichOne="invoice" />
-      </div>
+      <div className="my-2">{/* <CreateNewCta whichOne="invoice" /> */}</div>
       <ul>
         {selectedProperty.invoices?.map((invoice) => (
           <li
