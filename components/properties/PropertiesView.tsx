@@ -13,17 +13,13 @@ import {
 import { formatDateWithDay } from '@/lib/utils'
 import { Property } from '@/lib/definitions'
 import { usePropertiesStore } from '@/hooks/stores/usePropertiesStore'
-import { useDialogOpen } from '@/hooks/useDialogOpen'
+import { useDialogNewPropertyOpen } from '@/hooks/useDialogOpen'
 import NewPropertyModal from './NewPropertyModal'
 
 function PropertiesView() {
-  const {
-    properties,
-    fetchProperties,
-    selectedPropertyId,
-    setSelectedProperty,
-  } = usePropertiesStore()
-  const { open, setOpen } = useDialogOpen()
+  const { properties, fetchProperties, selectedProperty, setSelectedProperty } =
+    usePropertiesStore()
+  const { open, setOpen } = useDialogNewPropertyOpen()
 
   useEffect(() => {
     if (properties.length === 0) {
@@ -65,7 +61,7 @@ function PropertiesView() {
               <TableRow
                 className={clsx(
                   'flex w-full text-primary transition-colors hover:bg-accent',
-                  selectedPropertyId === property.property_id &&
+                  selectedProperty?.property_id === property.property_id &&
                     'bg-accent text-background font-medium'
                 )}
                 key={property.property_id}

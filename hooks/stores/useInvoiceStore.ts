@@ -1,7 +1,7 @@
-import { Invoice } from '@/lib/definitions'
+import { AppState, Invoice } from '@/lib/definitions'
 import { create } from 'zustand'
 
-export interface InvoicesStoreState {
+export interface InvoicesStoreState extends Partial<AppState> {
   selectedInvoice: Invoice | null
   setSelectedInvoice: (invoice: Invoice) => void
 }

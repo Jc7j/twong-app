@@ -28,21 +28,16 @@ export async function fetchInvoicesByPropertyId(
   return invoices
 }
 
-export async function createInvoiceForProperty(propertyId: number) {
-  const { data, error } = await supabase.from('invoices').insert([
-    {
-      property_id: propertyId,
-      invoice_month: new Date().toISOString().slice(0, 10),
-      last_modified: new Date(),
-      management_fee: 0,
-      total: 0,
-    },
-  ])
-
+export async function createNewInvoice(property_id: number): Promise<Invoice> {
+  const { data, error } = await supabase
+    .from('invoices')
+    .insert([{ property_id }])
+    .select()
   if (error) {
-    console.error('Error creating invoice:', error.message)
+    console.error('Error inserting new invoice:', error)
     throw new Error(error.message)
   }
+  return data[0] as Invoice
 }
 
 export async function updateInvoiceMonth(

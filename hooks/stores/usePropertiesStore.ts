@@ -8,8 +8,6 @@ import { Property } from '@/lib/definitions'
 export interface PropertiesStoreState {
   selectedProperty: Property | null
   properties: Property[]
-  selectedPropertyId: number | null
-  setSelectedPropertyId: (propertyId: number | null) => void
   setSelectedProperty: (propertyId: number | null) => void
   fetchProperties: () => Promise<void>
   updatePropertyDetails: (
@@ -21,12 +19,8 @@ export interface PropertiesStoreState {
 export const usePropertiesStore = create<PropertiesStoreState>((set, get) => ({
   selectedProperty: null,
   properties: [],
-  selectedPropertyId: null,
 
   setProperties: (properties: Property[]) => set({ properties }),
-
-  setSelectedPropertyId: (propertyId: number | null) =>
-    set({ selectedPropertyId: propertyId }),
 
   setSelectedProperty: (propertyId) => {
     const { properties } = get()

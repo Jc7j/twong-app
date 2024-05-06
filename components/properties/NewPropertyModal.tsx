@@ -1,11 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogFooter } from '@/components/ui/dialog'
 import { createNewProperty } from '@/lib/supabase/propertyApi'
 import { usePropertiesStore } from '@/hooks/stores/usePropertiesStore'
 
@@ -18,13 +14,13 @@ export default function NewPropertyModal({
   isOpen,
   onOpenChange,
 }: NewPropertyModalProps) {
-  const {fetchProperties} = usePropertiesStore()
+  const { fetchProperties } = usePropertiesStore()
   const [propertyName, setPropertyName] = useState('')
   const [houseAddress, setHouseAddress] = useState('')
 
-  async function handleSave (e: React.FormEvent<HTMLFormElement>) {
+  async function handleSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    await createNewProperty({name: propertyName, address: houseAddress})
+    await createNewProperty({ name: propertyName, address: houseAddress })
     await fetchProperties()
     onOpenChange(false)
   }
@@ -54,7 +50,10 @@ export default function NewPropertyModal({
           />
 
           <DialogFooter>
-            <button type="submit" className="mt-4 px-3 py-1 bg-accent text-background rounded text-sm">
+            <button
+              type="submit"
+              className="mt-4 px-3 py-1 bg-accent text-background rounded text-sm"
+            >
               Save
             </button>
           </DialogFooter>

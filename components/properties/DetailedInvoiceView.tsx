@@ -14,21 +14,20 @@ import { EditableField } from '../EditableField'
 import { EditModeToggle } from '../EditModeToggle'
 import { monthYearSchema } from '@/lib/schemas'
 import { usePropertiesStore } from '@/hooks/stores/usePropertiesStore'
+import { useDialogInvoiceOpen } from '@/hooks/useDialogOpen'
 
 interface DetailedInvoiceViewProps {
   invoice: Invoice
   property: Property
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
 }
 
 export function DetailedInvoiceView({
   invoice,
   property,
-  isOpen,
-  onOpenChange,
 }: DetailedInvoiceViewProps) {
   const { fetchProperties } = usePropertiesStore()
+  const { open, setOpen } = useDialogInvoiceOpen()
+
   const [isEditing, setIsEditing] = useState(false)
   const [editedMonth, setEditedMonth] = useState(() => {
     const date = new Date(invoice.invoice_month)
@@ -53,8 +52,13 @@ export function DetailedInvoiceView({
     }
   }
 
+  function handleClose() {
+    // @TODO SAVE CHANGES AND FETCH PROPERTIES AGAIN TO DISPLAY NEW DATA ON THE VIEWS
+    setOpen(false)
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <h2 className="text-2xl font-medium">{property.name}</h2>
@@ -81,9 +85,10 @@ export function DetailedInvoiceView({
         <hr />
         <div className="h-[250px] overflow-y-auto">
           <h3 className="text-xl font-medium">Charges and Reimbursements</h3>
-          {invoice.management_fee && (
+          {invoice.management_fee > 0 && (
             <span className="flex justify-between font-normal text-sm">
-              <p>Property Management Fee</p> <p>${invoice.management_fee}</p>
+              <p>Property Management Fee</p>
+              <p>${invoice.management_fee}</p>
             </span>
           )}
         </div>
