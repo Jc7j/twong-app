@@ -27,8 +27,9 @@ function PropertiesView() {
     }
   }, [properties.length, fetchProperties])
 
-  // @TODO: TOTAL isnt bugged because it takes it from last modified not current month
+  // @TODO: TOTAL is bugged because it takes it from last modified not current month
   // @TODO: Change COLUMNS
+
   return (
     <section className="md:w-7/12 mr-8">
       <span className="flex items-center justify-between ">

@@ -28,18 +28,27 @@ export const usePropertiesStore = create<PropertiesStoreState>((set, get) => ({
     const { properties } = get()
     const selected = properties.find((p) => p.property_id === propertyId)
 
-    set({
-      selectedProperty: selected,
-    })
+    if (selected && selected.invoices) {
+      selected.invoices = selected.invoices
+        .slice()
+        .sort(
+          (a, b) =>
+            new Date(b.invoice_month).getTime() -
+            new Date(a.invoice_month).getTime()
+        )
+    }
+
+    set({ selectedProperty: selected })
   },
 
   fetchProperty: async (propertyId) => {
-    try {
-      const property = await fetchPropertyById(propertyId)
-      set({ selectedProperty: property })
-    } catch (error) {
-      console.error('Failed to fetch property:', error)
-    }
+    const property = await fetchPropertyById(propertyId)
+    property.invoices = property.invoices?.sort(
+      (a, b) =>
+        new Date(b.invoice_month).getTime() -
+        new Date(a.invoice_month).getTime()
+    )
+    set({ selectedProperty: property })
   },
 
   fetchProperties: async () => {

@@ -17,7 +17,7 @@ export default function InvoiceView() {
     usePropertiesStore()
 
   const { selectedInvoice, setSelectedInvoice } = useInvoicesStore()
-  const { open, setOpen } = useDialogInvoiceOpen()
+  const { setOpen } = useDialogInvoiceOpen()
 
   const [isEditing, setIsEditing] = useState(false)
 
@@ -121,7 +121,7 @@ export default function InvoiceView() {
         {selectedProperty.invoices?.map((invoice) => (
           <li
             key={invoice.invoice_id}
-            className="flex justify-between text-black font-medium border-b border-black text-sm pb-1 cursor-pointer "
+            className="flex justify-between items-center text-black font-medium border-b border-black text-sm pb-1 cursor-pointer"
             onClick={() => handleInvoiceClick(invoice)}
           >
             {formatDate(invoice.invoice_month)}
