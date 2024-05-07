@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase/server'
 import { SupplyItem } from '@/lib/definitions'
 
-export async function fetchSupplyItems(page: number, limit: number) {
+export async function fetchPaginatedSupplyItems(page: number, limit: number) {
   const startIndex = page * limit
   const endIndex = startIndex + limit - 1
 
@@ -15,6 +15,19 @@ export async function fetchSupplyItems(page: number, limit: number) {
     throw new Error('Error fetching supply items: ' + error.message)
   }
 
+  return data
+}
+
+export async function fetchAllSupplyItems(): Promise<SupplyItem[]> {
+  const { data, error } = await supabase
+    .from('supply_items')
+    .select('*')
+    .order('name', { ascending: true })
+
+  if (error) {
+    throw new Error('Error fetching supply items: ' + error.message)
+  }
+  console.log('fetchAllSupply', data)
   return data
 }
 

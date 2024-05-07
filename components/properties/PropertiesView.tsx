@@ -50,10 +50,10 @@ function PropertiesView() {
                 Name
               </TableHead>
               <TableHead className="flex-grow flex-shrink w-1/3 text-center">
-                Last Modified
+                Last Modified Invoice
               </TableHead>
               <TableHead className="flex-grow flex-shrink w-1/3 text-right">
-                That Month Total
+                Last Invoice Total
               </TableHead>
             </TableRow>
           </TableHeader>

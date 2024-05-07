@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 import {
-  fetchSupplyItems,
   addSupplyItem,
   updateSupplyItem,
   deleteSupplyItem,
+  fetchPaginatedSupplyItems,
 } from '@/lib/supabase/suppliesApi'
 import { SupplyItem } from '@/lib/definitions'
 
@@ -13,7 +13,7 @@ type SupplyStoreState = {
   itemsPerPage: number
   setSupplyItems: (items: SupplyItem[]) => void
   setCurrentPage: (page: number) => void
-  loadSupplyItems: (page: number) => Promise<void>
+  fetchPaginatedSupplyItems: (page: number) => Promise<void>
   moreAvailable: boolean
   setMoreAvailable: (moreAvailable: boolean) => void
   addSupplyItem: (item: SupplyItem) => Promise<void>
@@ -36,10 +36,10 @@ export const useSupplyStore = create<SupplyStoreState>((set, get) => ({
     set({ currentPage: page })
   },
 
-  loadSupplyItems: async (page: number) => {
+  fetchPaginatedSupplyItems: async (page: number) => {
     const { itemsPerPage } = get()
     try {
-      const items = await fetchSupplyItems(page, itemsPerPage)
+      const items = await fetchPaginatedSupplyItems(page, itemsPerPage)
       const moreAvailable = items.length === itemsPerPage
       set({
         supplyItems: items || [],

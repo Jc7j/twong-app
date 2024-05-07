@@ -9,12 +9,13 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { formatDate, formatDateToISO, formatDateWithTime } from '@/lib/utils'
-import { updateInvoiceMonth } from '@/lib/supabase/invoiceApi'
+import { addInvoiceItem, updateInvoiceMonth } from '@/lib/supabase/invoiceApi'
 import { EditableField } from '../EditableField'
 import { EditModeToggle } from '../EditModeToggle'
 import { monthYearSchema } from '@/lib/schemas'
 import { usePropertiesStore } from '@/hooks/stores/usePropertiesStore'
 import { useDialogInvoiceOpen } from '@/hooks/useDialogOpen'
+import { useSupplyStore } from '@/hooks/stores/useSuppliesStore'
 
 interface DetailedInvoiceViewProps {
   invoice: Invoice
@@ -27,14 +28,22 @@ export function DetailedInvoiceView({
 }: DetailedInvoiceViewProps) {
   const { selectedProperty, fetchProperty } = usePropertiesStore()
   const { open, setOpen } = useDialogInvoiceOpen()
+  const { supplyItems } = useSupplyStore()
 
   const [isEditing, setIsEditing] = useState(false)
+  const [addingItem, setAddingItem] = useState(false)
   const [editedMonth, setEditedMonth] = useState('')
+  const [selectedSupplyId, setSelectedSupplyId] = useState<number | null>(null)
+  const [quantity, setQuantity] = useState(1)
+  const [invoiceItems, setInvoiceItems] = useState([])
+
+  console.log(invoice)
 
   useEffect(() => {
     if (invoice) {
       const formattedMonth = formatDate(new Date(invoice.invoice_month))
       setEditedMonth(formattedMonth)
+      setSelectedSupplyId(supplyItems[0].supply_id)
     }
   }, [invoice])
 
@@ -62,9 +71,27 @@ export function DetailedInvoiceView({
     }
   }
 
+  async function handleItemSave() {
+    if (selectedSupplyId !== null) {
+      await addInvoiceItem(invoice.invoice_id, selectedSupplyId, quantity)
+      setAddingItem(false)
+      // Refresh the invoice details here if needed
+    }
+  }
+
   async function handleClose() {
     await fetchProperty(selectedProperty?.property_id as number)
     setOpen(false)
+  }
+
+  function calculatedTaxPrice() {
+    const invoiceTotal = invoice.total;
+    const invoiceManagementFee = invoice.management_fee;
+    const taxableAmount = invoiceTotal - invoiceManagementFee;  
+    const nevadaTax = 0.08375;  
+    const taxedAmount = taxableAmount * nevadaTax;  
+    const finalAmount = (taxableAmount - taxedAmount) * nevadaTax
+    return Math.ceil(finalAmount * 100) / 100
   }
 
   return (
@@ -96,15 +123,61 @@ export function DetailedInvoiceView({
         <div className="h-[250px] overflow-y-auto">
           <h3 className="text-xl font-medium">Charges and Reimbursements</h3>
           {invoice.management_fee > 0 && (
-            <span className="flex justify-between font-normal text-sm">
+            <span className="flex justify-between font-normal">
               <p>Property Management Fee</p>
               <p>${invoice.management_fee}</p>
             </span>
           )}
+          {invoice.invoiceItems &&
+            invoice.invoiceItems.map((item) => (
+              <span className="flex justify-between items-end" key={item.item_id}>
+                <span>
+                <p className='inline text-sm mr-1'>x{item.quantity}</p>
+                <p className='inline'>{item.supplyItem?.name}</p>
+                </span>
+                <p>${(item.supplyItem?.price as number) * item.quantity}</p>
+              </span>
+            ))}
+
+          {addingItem ? (
+            <>
+              <select
+                value={selectedSupplyId as number}
+                onChange={(e) => setSelectedSupplyId(parseInt(e.target.value))}
+              >
+                {supplyItems.map((item) => (
+                  <option key={item.supply_id} value={item.supply_id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(parseInt(e.target.value))}
+              />
+              <button
+                onClick={handleItemSave}
+                className="mt-4 px-3 py-1 bg-accent text-background rounded text-sm"
+              >
+                Save changes
+              </button>
+            </>
+          ) : (
+            <button
+              className="mt-2 px-3 py-1 bg-accent text-background rounded text-sm"
+              onClick={() => setAddingItem(true)}
+            >
+              Add item+
+            </button>
+          )}
         </div>
         <hr />
         <DialogFooter className="flex flex-col">
+          <span className='flex justify-between items-end'>
           <p className="text-xs text-primary">taxes (8.375%)</p>
+          <p>${calculatedTaxPrice()}</p>
+          </span>
           <span className="flex justify-between items-end">
             <p className="text-xl mt-3">Total:</p>
             <p>${invoice.total}</p>

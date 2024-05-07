@@ -1,19 +1,21 @@
 import React, { useState, useEffect, ElementType } from 'react'
 
 interface EditableFieldProps {
-  value: any
-  onChange: (newValue: string) => void
-  isEditing: boolean
   as?: ElementType
+  autoFocus?: boolean
   className?: string
+  isEditing: boolean
+  onChange: (newValue: string) => void
+  value: any
 }
 
 export function EditableField({
-  value,
-  onChange,
-  isEditing,
   as: Component = 'p',
+  autoFocus,
   className = '',
+  isEditing,
+  onChange,
+  value,
 }: EditableFieldProps) {
   const [editValue, setEditValue] = useState(value)
 
@@ -34,7 +36,7 @@ export function EditableField({
       value={editValue}
       onChange={(e) => setEditValue(e.target.value)}
       onBlur={handleBlur}
-      autoFocus
+      autoFocus={autoFocus}
     />
   ) : (
     <Component className={`${className} mt-1`}>{value}</Component>

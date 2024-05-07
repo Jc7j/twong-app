@@ -1,5 +1,6 @@
 'use client'
 
+import clsx from 'clsx'
 import React, { useState, useEffect } from 'react'
 import { useSupplyStore } from '@/hooks/stores/useSuppliesStore'
 import {
@@ -13,12 +14,11 @@ import {
 import { SupplyItem } from '@/lib/definitions'
 import { EditModeToggle } from '../EditModeToggle'
 import { EditableField } from '../EditableField'
-import clsx from 'clsx'
 
 export default function SuppliesView() {
   const {
     supplyItems,
-    loadSupplyItems,
+    fetchPaginatedSupplyItems,
     updateSupplyItem,
     deleteSupplyItem,
     currentPage,
@@ -30,13 +30,13 @@ export default function SuppliesView() {
 
   useEffect(() => {
     if (supplyItems.length === 0) {
-      loadSupplyItems(currentPage)
+      fetchPaginatedSupplyItems(currentPage)
     }
     setEditableItems(supplyItems)
-  }, [supplyItems, loadSupplyItems, currentPage])
+  }, [supplyItems, fetchPaginatedSupplyItems, currentPage])
 
   useEffect(() => {
-    loadSupplyItems(currentPage)
+    fetchPaginatedSupplyItems(currentPage)
   }, [currentPage])
 
   function handleEditField(
@@ -62,7 +62,7 @@ export default function SuppliesView() {
     try {
       await Promise.all(updatePromises)
       setIsEditing(false)
-      await loadSupplyItems(currentPage)
+      await fetchPaginatedSupplyItems(currentPage)
     } catch (error) {
       console.error('Failed to save updates:', error)
     }
@@ -70,7 +70,7 @@ export default function SuppliesView() {
 
   async function handleDelete(supply_id: number) {
     await deleteSupplyItem(supply_id)
-    await loadSupplyItems(currentPage)
+    await fetchPaginatedSupplyItems(currentPage)
   }
 
   function handleNextPage() {
@@ -83,14 +83,14 @@ export default function SuppliesView() {
   }
 
   return (
-    <section className="rounded-2xl border p-4 w-full overflow-x-auto mt-8">
-      <span className="flex justify-between">
+    <section className="mt-8">
+      <span className="flex">
         <EditModeToggle
           isEditing={isEditing}
           setIsEditing={setIsEditing}
           handleSave={handleSave}
         />
-        <div>
+        <div className="ml-8">
           <button
             onClick={handlePrevPage}
             className={clsx(
@@ -113,40 +113,53 @@ export default function SuppliesView() {
           </button>
         </div>
       </span>
-      <Table>
-        <TableHeader>
-          <TableRow className="flex w-full">
-            <TableHead className="flex-grow flex-shrink w-1/5">Name</TableHead>
-            <TableHead className="flex-grow flex-shrink w-1/5 text-center">
-              Price
-            </TableHead>
-            <TableHead className="flex-grow flex-shrink w-1/5 text-center">
-              Qty Per Package
-            </TableHead>
-            {isEditing && (
+      <div className="rounded-2xl border p-4 w-full overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow className="flex w-full">
+              <TableHead className="flex-grow flex-shrink w-1/5">
+                Name
+              </TableHead>
               <TableHead className="flex-grow flex-shrink w-1/5 text-center">
-                Link
+                Price
               </TableHead>
-            )}
-            {isEditing && (
-              <TableHead className="flex-grow flex-shrink w-1/5 text-right">
-                {''}
+              <TableHead className="flex-grow flex-shrink w-1/5 text-center">
+                Qty Per Package
               </TableHead>
-            )}
-          </TableRow>
-        </TableHeader>
+              {isEditing && (
+                <TableHead className="flex-grow flex-shrink w-1/5 text-center">
+                  Link
+                </TableHead>
+              )}
+              {isEditing && (
+                <TableHead className="flex-grow flex-shrink w-1/5 text-right">
+                  {''}
+                </TableHead>
+              )}
+            </TableRow>
+          </TableHeader>
 
-        <TableBody>
-          {editableItems.map((item, index) => (
-            <TableRow key={item.supply_id} className="flex w-full">
-              <TableCell className="flex-grow w-1/5 truncate">
-                {item.link ? (
-                  <a
-                    className="text-accent underline underline-offset-2"
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+          <TableBody>
+            {editableItems.map((item, index) => (
+              <TableRow key={item.supply_id} className="flex w-full items-end">
+                <TableCell className="flex-grow w-1/5 truncate">
+                  {item.link ? (
+                    <a
+                      className="text-accent underline underline-offset-2"
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <EditableField
+                        value={item.name}
+                        onChange={(value: string) =>
+                          handleEditField(index, 'name', value)
+                        }
+                        isEditing={isEditing}
+                        as="div"
+                      />
+                    </a>
+                  ) : (
                     <EditableField
                       value={item.name}
                       onChange={(value: string) =>
@@ -155,64 +168,55 @@ export default function SuppliesView() {
                       isEditing={isEditing}
                       as="div"
                     />
-                  </a>
-                ) : (
-                  <EditableField
-                    value={item.name}
-                    onChange={(value: string) =>
-                      handleEditField(index, 'name', value)
-                    }
-                    isEditing={isEditing}
-                    as="div"
-                  />
-                )}
-              </TableCell>
-              <TableCell className="flex-grow w-1/5 truncate text-center">
-                <EditableField
-                  value={item.price.toString()}
-                  onChange={(value: string) =>
-                    handleEditField(index, 'price', value)
-                  }
-                  isEditing={isEditing}
-                  as="div"
-                />
-              </TableCell>
-              <TableCell className="flex-grow w-1/5 truncate text-center">
-                <EditableField
-                  value={item.qty_per_package.toString()}
-                  onChange={(value: string) =>
-                    handleEditField(index, 'qty_per_package', value)
-                  }
-                  isEditing={isEditing}
-                  as="div"
-                />
-              </TableCell>
-              {isEditing && (
+                  )}
+                </TableCell>
                 <TableCell className="flex-grow w-1/5 truncate text-center">
                   <EditableField
-                    value={item.link || ''}
+                    value={item.price.toString()}
                     onChange={(value: string) =>
-                      handleEditField(index, 'link', value)
+                      handleEditField(index, 'price', value)
                     }
                     isEditing={isEditing}
                     as="div"
                   />
                 </TableCell>
-              )}
-              {isEditing && (
-                <TableCell className="flex-grow w-1/5 truncate text-right">
-                  <button
-                    onClick={() => handleDelete(item.supply_id)}
-                    className="text-accent underline underline-offset-2 text-sm"
-                  >
-                    delete
-                  </button>
+                <TableCell className="flex-grow w-1/5 truncate text-center">
+                  <EditableField
+                    value={item.qty_per_package.toString()}
+                    onChange={(value: string) =>
+                      handleEditField(index, 'qty_per_package', value)
+                    }
+                    isEditing={isEditing}
+                    as="div"
+                  />
                 </TableCell>
-              )}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+                {isEditing && (
+                  <TableCell className="flex-grow w-1/5 truncate text-center">
+                    <EditableField
+                      value={item.link || ''}
+                      onChange={(value: string) =>
+                        handleEditField(index, 'link', value)
+                      }
+                      isEditing={isEditing}
+                      as="div"
+                    />
+                  </TableCell>
+                )}
+                {isEditing && (
+                  <TableCell className="flex-grow w-1/5 truncate text-right">
+                    <button
+                      onClick={() => handleDelete(item.supply_id)}
+                      className="text-accent underline underline-offset-2 text-sm"
+                    >
+                      delete
+                    </button>
+                  </TableCell>
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </section>
   )
 }

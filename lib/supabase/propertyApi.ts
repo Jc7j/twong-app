@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase/server'
-import { Property } from '@/lib/definitions'
+import {  Property } from '@/lib/definitions'
 
 export async function fetchProperties(): Promise<Property[]> {
   const { data: properties, error } = await supabase

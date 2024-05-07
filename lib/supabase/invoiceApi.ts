@@ -60,3 +60,19 @@ export async function updateInvoiceMonth(
 
   return data[0].invoice_month
 }
+
+export async function addInvoiceItem(
+  invoiceId: number,
+  supplyId: number,
+  quantity: number
+) {
+  const { data, error } = await supabase
+    .from('invoice_items')
+    .insert({ invoice_id: invoiceId, supply_id: supplyId, quantity })
+
+  if (error) {
+    console.error('Error adding invoice item:', error.message)
+    throw new Error(error.message)
+  }
+  console.log('adding succesfful')
+}

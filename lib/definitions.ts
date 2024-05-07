@@ -30,7 +30,7 @@ export interface Invoice {
   last_modified: Date
   management_fee: number
   total: number
-  invoice_items?: InvoiceItem[]
+  invoiceItems?: InvoiceItem[]
 }
 
 export interface InvoiceItem {
@@ -38,7 +38,7 @@ export interface InvoiceItem {
   readonly invoice_id: number
   readonly supply_id: number
   quantity: number
-  supply_item?: SupplyItem
+  supplyItem?: SupplyItem
 }
 
 export interface AppState {
