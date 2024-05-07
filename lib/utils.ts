@@ -64,3 +64,8 @@ export function formatDateToISO(monthYear: string): string {
   const monthIndex = months.indexOf(month) + 1 // Get month as a number
   return `${year}-${monthIndex.toString().padStart(2, '0')}-05` // Formats as "YYYY-MM-01"
 }
+
+export function numToFixedFloat(num: number): number {
+  const res = parseFloat(num.toString())
+  return parseFloat(res.toFixed(2))
+}

@@ -64,6 +64,7 @@ export default function InvoiceView() {
     }
     try {
       const newInvoice = await createNewInvoice(selectedProperty?.property_id)
+      await fetchProperty(selectedProperty?.property_id as number)
       newInvoice && setSelectedInvoice(newInvoice)
       setOpen(true)
     } catch (error) {

@@ -31,7 +31,7 @@ function PropertiesView() {
   // @TODO: Change COLUMNS
 
   return (
-    <section className="md:w-7/12 mr-8">
+    <section className="md:w-7/12 md:mr-8 mt-8 md:mt-0">
       <span className="flex items-center justify-between ">
         <p className="md:w-1/3">search bar</p>
         <button

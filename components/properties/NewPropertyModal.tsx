@@ -22,6 +22,8 @@ export default function NewPropertyModal({
     e.preventDefault()
     await createNewProperty({ name: propertyName, address: houseAddress })
     await fetchProperties()
+    setPropertyName('')
+    setHouseAddress('')
     onOpenChange(false)
   }
 
@@ -29,24 +31,24 @@ export default function NewPropertyModal({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <form onSubmit={handleSave}>
-          <p>Property Name</p>
+          <p className='text-lg font-medium'>Property Name</p>
           <input
             type="text"
             value={propertyName}
             defaultValue={'...'}
             onChange={(e) => setPropertyName(e.target.value)}
             required
-            className="form-input px-2 py-1 rounded border mt-1 w-full"
+            className="form-input px-2 py-1 rounded border mt-1 w-full "
           />
 
-          <p>House Address</p>
+          <p className='text-lg font-medium'>House Address</p>
           <input
             type="text"
             value={houseAddress}
             defaultValue={'...'}
             onChange={(e) => setHouseAddress(e.target.value)}
             required
-            className="form-input px-2 py-1 rounded border mt-1 w-full"
+            className="form-input px-2 py-1 rounded border mt-1 w-full  "
           />
 
           <DialogFooter>

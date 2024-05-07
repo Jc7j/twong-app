@@ -8,8 +8,8 @@ import {
   DialogHeader,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { formatDate, formatDateToISO, formatDateWithTime } from '@/lib/utils'
-import { addInvoiceItem, updateInvoiceMonth } from '@/lib/supabase/invoiceApi'
+import { formatDate, formatDateToISO, formatDateWithTime, numToFixedFloat } from '@/lib/utils'
+import { addInvoiceItem, updateInvoiceMonth, updateManagementFee } from '@/lib/supabase/invoiceApi'
 import { EditableField } from '../EditableField'
 import { EditModeToggle } from '../EditModeToggle'
 import { monthYearSchema } from '@/lib/schemas'
@@ -36,14 +36,12 @@ export function DetailedInvoiceView({
   const [selectedSupplyId, setSelectedSupplyId] = useState<number | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [stagedItems, setStagedItems] = useState<InvoiceItem[]>([])
-
-  console.log('stagedItems', stagedItems)
+  const [editedManagementFee, setEditedManagementFee] = useState<number>(invoice.management_fee);
 
   useEffect(() => {
     const formattedMonth = formatDate(new Date(invoice.invoice_month))
     setEditedMonth(formattedMonth)
     setSelectedSupplyId(supplyItems[0].supply_id)
-    setStagedItems(invoice.invoiceItems || [])
   }, [invoice, supplyItems])
 
   if (!selectedProperty) {
@@ -51,16 +49,12 @@ export function DetailedInvoiceView({
   }
 
   async function handleSave() {
-    const validationResult = monthYearSchema.safeParse(editedMonth)
-    if (validationResult.success) {
-      const isoDate = formatDateToISO(editedMonth)
       try {
         setIsEditing(false)
-        const newUpdatedMonth = await updateInvoiceMonth(
-          invoice.invoice_id,
-          isoDate
-        )
-        setEditedMonth(formatDate(newUpdatedMonth))
+        if (invoice.management_fee != editedManagementFee){
+
+          await updateManagementFee(invoice.invoice_id, invoice.total,editedManagementFee)
+        }
         // Save staged invoice items to the db
         for (const item of stagedItems) {
           if (item.quantity > 0) {
@@ -72,13 +66,30 @@ export function DetailedInvoiceView({
           }
         }
         await fetchProperty(selectedProperty?.property_id as number)
+        setEditedManagementFee(0)
+        setStagedItems([])
         setOpen(false)
       } catch (error) {
         console.error('Error updating invoice:', error)
         alert('Failed to save changes: ' + error)
       }
-    } else {
-      alert(validationResult.error.message)
+  }
+
+  async function handleOnSaveEditMonth() {
+    const validationResult = monthYearSchema.safeParse(editedMonth)
+    if (validationResult.success) {
+      const isoDate = formatDateToISO(editedMonth)
+      try {
+        setIsEditing(false)
+        const newUpdatedMonth = await updateInvoiceMonth(
+          invoice.invoice_id,
+          isoDate
+        )
+        setEditedMonth(formatDate(newUpdatedMonth))
+      } catch (error) {
+        console.error('Error updating invoice:', error)
+        alert('Failed to save changes: ' + error)
+      }
     }
   }
 
@@ -96,11 +107,6 @@ export function DetailedInvoiceView({
     setAddingItem(false)
   }
 
-  function numToFixedFloat(num: number): number {
-    const res = parseFloat(num.toString())
-    return parseFloat(res.toFixed(2))
-  }
-
   function calculatedTaxPrice() {
     const invoiceTotal = invoice.total
     const invoiceManagementFee = invoice.management_fee
@@ -111,8 +117,18 @@ export function DetailedInvoiceView({
     return Math.ceil(finalAmount * 100) / 100
   }
 
+  function handleOpenChange() {
+    setAddingItem(false)
+    setEditedMonth('')
+    setIsEditing(false)
+    setStagedItems([])
+    setEditedManagementFee(0)
+    setQuantity(1)
+    setOpen(false)
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <h2 className="text-2xl font-medium">{property.name}</h2>
@@ -126,7 +142,7 @@ export function DetailedInvoiceView({
             <EditModeToggle
               isEditing={isEditing}
               setIsEditing={setIsEditing}
-              handleSave={handleSave}
+              handleSave={handleOnSaveEditMonth}
             />
           </span>
           <div className="text-sm text-primary mt-5">
@@ -137,14 +153,20 @@ export function DetailedInvoiceView({
           </div>
         </DialogHeader>
         <hr />
-        <div className="h-[250px] overflow-y-auto">
+        <div className="h-[250px] overflow-y-auto ">
           <h3 className="text-xl font-medium">Charges and Reimbursements</h3>
-          {invoice.management_fee > 0 && (
-            <span className="flex justify-between font-normal">
-              <p>Property Management Fee</p>
-              <p>${invoice.management_fee}</p>
-            </span>
-          )}
+          <span className="flex justify-between font-normal">
+            <p className=''>Property Management Fee</p>
+            <span className='w-1/5 flex'>
+            $
+              <input
+                type="number"
+                value={editedManagementFee || 0}
+                className='text-right w-full'
+                onChange={(e) =>setEditedManagementFee(parseFloat(e.target.value))}
+              />
+              </span>
+          </span>
           {invoice.invoiceItems &&
             invoice.invoiceItems.map((item) => (
               <span
@@ -161,7 +183,8 @@ export function DetailedInvoiceView({
           {stagedItems.map((item) => (
             <div key={item.item_id} className="flex justify-between">
               <span>
-                {item.supplyItem?.name} x {item.quantity}
+                <p className="inline text-sm mr-1">x{item.quantity}</p>
+                <p className="inline">{item.supplyItem?.name}</p>
               </span>
               {item.quantity && (
                 <span>
@@ -175,9 +198,21 @@ export function DetailedInvoiceView({
 
           {addingItem ? (
             <>
+            <div className='flex'>
+            
+            <p>Quantity:</p>
+                  <input
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(parseInt(e.target.value))}
+              />
+              
+            <p>Item:</p>
               <select
                 value={selectedSupplyId as number}
                 onChange={(e) => setSelectedSupplyId(parseInt(e.target.value))}
+                className='border-accent overflow-ellipsis'
+                autoFocus
               >
                 {supplyItems.map((item) => (
                   <option key={item.supply_id} value={item.supply_id}>
@@ -185,16 +220,12 @@ export function DetailedInvoiceView({
                   </option>
                 ))}
               </select>
-              <input
-                type="number"
-                value={quantity}
-                onChange={(e) => setQuantity(parseInt(e.target.value))}
-              />
+              </div>
               <button
                 onClick={handleAddItem}
-                className="mt-4 px-3 py-1 bg-accent text-background rounded text-sm"
+                className="mt-2 px-3 py-1 bg-accent text-background rounded text-sm"
               >
-                Save changes
+                save changes
               </button>
             </>
           ) : (
@@ -206,7 +237,7 @@ export function DetailedInvoiceView({
             </button>
           )}
         </div>
-        <hr />
+        <hr className="mt-8" />
         <DialogFooter className="flex flex-col">
           <span className="flex justify-between items-end">
             <p className="text-xs text-primary">taxes (8.375%)</p>

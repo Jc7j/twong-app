@@ -31,7 +31,7 @@ export async function fetchInvoicesByPropertyId(
 export async function createNewInvoice(property_id: number): Promise<Invoice> {
   const { data, error } = await supabase
     .from('invoices')
-    .insert([{ property_id }])
+    .insert({ property_id, last_modified: new Date() })
     .select()
   if (error) {
     console.error('Error inserting new invoice:', error)
@@ -61,6 +61,18 @@ export async function updateInvoiceMonth(
   return data[0].invoice_month
 }
 
+export async function updateManagementFee(
+  invoiceId: number,
+  invoiceTotal: number,
+  managementFee: number
+) {
+  const {error} = await supabase.from('invoices').update({management_fee: managementFee, total: managementFee + invoiceTotal}).match({invoice_id: invoiceId})
+  if (error) {
+    console.error('Error updating management Fee: ', error.message)
+  }
+  console.log("updateed")
+}
+
 export async function addInvoiceItem(
   invoiceId: number,
   supplyId: number,
@@ -74,5 +86,5 @@ export async function addInvoiceItem(
     console.error('Error adding invoice item:', error.message)
     throw new Error(error.message)
   }
-  console.log('adding succesfful')
+  console
 }

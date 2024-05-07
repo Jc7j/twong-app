@@ -27,7 +27,6 @@ export async function fetchAllSupplyItems(): Promise<SupplyItem[]> {
   if (error) {
     throw new Error('Error fetching supply items: ' + error.message)
   }
-  console.log('fetchAllSupply', data)
   return data
 }
 
