@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Invoice, Property } from '@/lib/definitions'
+import { Invoice, InvoiceItem, Property } from '@/lib/definitions'
 import {
   Dialog,
   DialogContent,
@@ -35,17 +35,16 @@ export function DetailedInvoiceView({
   const [editedMonth, setEditedMonth] = useState('')
   const [selectedSupplyId, setSelectedSupplyId] = useState<number | null>(null)
   const [quantity, setQuantity] = useState(1)
-  const [invoiceItems, setInvoiceItems] = useState([])
+  const [stagedItems, setStagedItems] = useState<InvoiceItem[]>([])
 
-  console.log(invoice)
+  console.log('stagedItems', stagedItems)
 
   useEffect(() => {
-    if (invoice) {
-      const formattedMonth = formatDate(new Date(invoice.invoice_month))
-      setEditedMonth(formattedMonth)
-      setSelectedSupplyId(supplyItems[0].supply_id)
-    }
-  }, [invoice])
+    const formattedMonth = formatDate(new Date(invoice.invoice_month))
+    setEditedMonth(formattedMonth)
+    setSelectedSupplyId(supplyItems[0].supply_id)
+    setStagedItems(invoice.invoiceItems || [])
+  }, [invoice, supplyItems])
 
   if (!selectedProperty) {
     return null
@@ -62,34 +61,52 @@ export function DetailedInvoiceView({
           isoDate
         )
         setEditedMonth(formatDate(newUpdatedMonth))
+        // Save staged invoice items to the db
+        for (const item of stagedItems) {
+          if (item.quantity > 0) {
+            await addInvoiceItem(
+              invoice.invoice_id,
+              item.supply_id,
+              item.quantity
+            )
+          }
+        }
         await fetchProperty(selectedProperty?.property_id as number)
+        setOpen(false)
       } catch (error) {
         console.error('Error updating invoice:', error)
+        alert('Failed to save changes: ' + error)
       }
     } else {
       alert(validationResult.error.message)
     }
   }
 
-  async function handleItemSave() {
-    if (selectedSupplyId !== null) {
-      await addInvoiceItem(invoice.invoice_id, selectedSupplyId, quantity)
-      setAddingItem(false)
-      // Refresh the invoice details here if needed
+  function handleAddItem() {
+    const newItem = {
+      item_id: Date.now(),
+      invoice_id: invoice.invoice_id,
+      supply_id: selectedSupplyId as number,
+      quantity,
+      supplyItem: supplyItems.find(
+        (item) => item.supply_id === selectedSupplyId
+      ),
     }
+    setStagedItems([...stagedItems, newItem])
+    setAddingItem(false)
   }
 
-  async function handleClose() {
-    await fetchProperty(selectedProperty?.property_id as number)
-    setOpen(false)
+  function numToFixedFloat(num: number): number {
+    const res = parseFloat(num.toString())
+    return parseFloat(res.toFixed(2))
   }
 
   function calculatedTaxPrice() {
-    const invoiceTotal = invoice.total;
-    const invoiceManagementFee = invoice.management_fee;
-    const taxableAmount = invoiceTotal - invoiceManagementFee;  
-    const nevadaTax = 0.08375;  
-    const taxedAmount = taxableAmount * nevadaTax;  
+    const invoiceTotal = invoice.total
+    const invoiceManagementFee = invoice.management_fee
+    const taxableAmount = invoiceTotal - invoiceManagementFee
+    const nevadaTax = 0.08375
+    const taxedAmount = taxableAmount * nevadaTax
     const finalAmount = (taxableAmount - taxedAmount) * nevadaTax
     return Math.ceil(finalAmount * 100) / 100
   }
@@ -130,14 +147,31 @@ export function DetailedInvoiceView({
           )}
           {invoice.invoiceItems &&
             invoice.invoiceItems.map((item) => (
-              <span className="flex justify-between items-end" key={item.item_id}>
+              <span
+                className="flex justify-between items-end"
+                key={item.item_id}
+              >
                 <span>
-                <p className='inline text-sm mr-1'>x{item.quantity}</p>
-                <p className='inline'>{item.supplyItem?.name}</p>
+                  <p className="inline text-sm mr-1">x{item.quantity}</p>
+                  <p className="inline">{item.supplyItem?.name}</p>
                 </span>
                 <p>${(item.supplyItem?.price as number) * item.quantity}</p>
               </span>
             ))}
+          {stagedItems.map((item) => (
+            <div key={item.item_id} className="flex justify-between">
+              <span>
+                {item.supplyItem?.name} x {item.quantity}
+              </span>
+              {item.quantity && (
+                <span>
+                  $
+                  {(numToFixedFloat(item.supplyItem?.price as number) || 0) *
+                    item.quantity}
+                </span>
+              )}
+            </div>
+          ))}
 
           {addingItem ? (
             <>
@@ -157,7 +191,7 @@ export function DetailedInvoiceView({
                 onChange={(e) => setQuantity(parseInt(e.target.value))}
               />
               <button
-                onClick={handleItemSave}
+                onClick={handleAddItem}
                 className="mt-4 px-3 py-1 bg-accent text-background rounded text-sm"
               >
                 Save changes
@@ -168,15 +202,15 @@ export function DetailedInvoiceView({
               className="mt-2 px-3 py-1 bg-accent text-background rounded text-sm"
               onClick={() => setAddingItem(true)}
             >
-              Add item+
+              add item +
             </button>
           )}
         </div>
         <hr />
         <DialogFooter className="flex flex-col">
-          <span className='flex justify-between items-end'>
-          <p className="text-xs text-primary">taxes (8.375%)</p>
-          <p>${calculatedTaxPrice()}</p>
+          <span className="flex justify-between items-end">
+            <p className="text-xs text-primary">taxes (8.375%)</p>
+            <p>${calculatedTaxPrice()}</p>
           </span>
           <span className="flex justify-between items-end">
             <p className="text-xl mt-3">Total:</p>
@@ -186,7 +220,7 @@ export function DetailedInvoiceView({
         <hr />
         <span className="flex justify-between items-end">
           <button
-            onClick={handleClose}
+            onClick={handleSave}
             className="mt-4 px-3 py-1 bg-accent text-background rounded text-sm"
           >
             Save invoice changes

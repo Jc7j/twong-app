@@ -46,14 +46,11 @@ function PropertiesView() {
         <Table>
           <TableHeader>
             <TableRow className="flex w-full text-base">
-              <TableHead className="flex-grow flex-shrink w-1/3">
+              <TableHead className="flex-grow flex-shrink w-1/3 text-center">
                 Name
               </TableHead>
               <TableHead className="flex-grow flex-shrink w-1/3 text-center">
                 Last Modified Invoice
-              </TableHead>
-              <TableHead className="flex-grow flex-shrink w-1/3 text-right">
-                Last Invoice Total
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -69,7 +66,7 @@ function PropertiesView() {
                 key={property.property_id}
                 onClick={() => setSelectedProperty(property.property_id)}
               >
-                <TableCell className="flex-grow flex-shrink w-1/3">
+                <TableCell className="flex-grow flex-shrink w-1/3 text-center">
                   {property.name}
                 </TableCell>
                 <TableCell className="flex-grow flex-shrink w-1/3 text-center">
@@ -77,11 +74,6 @@ function PropertiesView() {
                   property.invoices.length > 0 &&
                   property.invoices[0].last_modified
                     ? formatDateWithDay(property.invoices[0].last_modified)
-                    : 'No data'}
-                </TableCell>
-                <TableCell className="flex-grow flex-shrink w-1/3 text-right">
-                  {property.invoices && property.invoices.length > 0
-                    ? `$${property.invoices[0].total}`
                     : 'No data'}
                 </TableCell>
               </TableRow>
