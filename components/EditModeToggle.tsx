@@ -4,12 +4,14 @@ interface EditModeToggleProps {
   isEditing: boolean
   setIsEditing: (isEditing: boolean) => void
   handleSave: () => void
+  editText?: string
 }
 
 export function EditModeToggle({
   isEditing,
   setIsEditing,
   handleSave,
+  editText,
 }: EditModeToggleProps) {
   return isEditing ? (
     <button
@@ -23,7 +25,7 @@ export function EditModeToggle({
       onClick={() => setIsEditing(true)}
       className="text-accent underline underline-offset-2 text-sm focus:outline-none"
     >
-      Edit
+      {editText ? editText : 'Edit'}
     </button>
   )
 }

@@ -66,11 +66,17 @@ export async function updateManagementFee(
   invoiceTotal: number,
   managementFee: number
 ) {
-  const {error} = await supabase.from('invoices').update({management_fee: managementFee, total: managementFee + invoiceTotal}).match({invoice_id: invoiceId})
+  const { error } = await supabase
+    .from('invoices')
+    .update({
+      management_fee: managementFee,
+      total: managementFee + invoiceTotal,
+    })
+    .match({ invoice_id: invoiceId })
   if (error) {
     console.error('Error updating management Fee: ', error.message)
   }
-  console.log("updateed")
+  console.log('updateed')
 }
 
 export async function addInvoiceItem(
@@ -87,4 +93,34 @@ export async function addInvoiceItem(
     throw new Error(error.message)
   }
   console
+}
+
+export async function updateInvoiceItemQuantity(
+  itemId: number,
+  newQuantity: number
+) {
+  const { error } = await supabase
+    .from('invoice_items')
+    .update({
+      quantity: newQuantity,
+    })
+    .match({ item_id: itemId })
+
+  if (error) {
+    console.error('Error updating invoice item quantity:', error.message)
+    throw new Error('Failed to update invoice item quantity.')
+  }
+
+  console.log('Invoice item updated successfully:')
+}
+
+export async function deleteInvoiceItem(
+  itemId: number,
+) {
+  const {error} = await supabase.from('invoice_items').delete().match({item_id: itemId})
+
+  if (error) {
+    console.error('Error deleting invoice item', error.message)
+    throw new Error ('Failed to delete invoice item')
+  }
 }

@@ -31,7 +31,7 @@ export default function NewPropertyModal({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <form onSubmit={handleSave}>
-          <p className='text-lg font-medium'>Property Name</p>
+          <p className="text-lg font-medium">Property Name</p>
           <input
             type="text"
             value={propertyName}
@@ -41,7 +41,7 @@ export default function NewPropertyModal({
             className="form-input px-2 py-1 rounded border mt-1 w-full "
           />
 
-          <p className='text-lg font-medium'>House Address</p>
+          <p className="text-lg font-medium">House Address</p>
           <input
             type="text"
             value={houseAddress}

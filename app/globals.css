@@ -79,14 +79,19 @@ a {
 }
 
 input {
-  border: 1px solid #57604B;
+  border: 1px solid #57604b;
+  border-radius: 4px;
+}
+
+select {
+  border: 1px solid #57604b;
   border-radius: 4px;
 }
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .container {

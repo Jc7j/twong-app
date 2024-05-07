@@ -28,7 +28,6 @@ export default function InvoiceView() {
       const res = await fetchAllSupplyItems()
       setSupplyItems(res)
     }
-
     fetchData()
   }, [setSupplyItems])
 
@@ -89,7 +88,7 @@ export default function InvoiceView() {
         as="h1"
         className="text-2xl font-medium"
       />
-      <div className="mt-5 text-primary ">
+      <div className="mt-4 text-primary">
         <EditableField
           value={selectedProperty.owner?.name ?? ''}
           onChange={(value: string) => (selectedProperty.owner!.name = value)}
@@ -136,7 +135,7 @@ export default function InvoiceView() {
             className="flex justify-between items-center text-black font-medium border-b border-black text-sm pb-1 cursor-pointer w-full"
             onClick={() => handleInvoiceClick(invoice)}
           >
-            <span className="flex items-center w-2/5">
+            <span className="flex items-center w-3/5">
               <p className="mr-2">{formatDate(invoice.invoice_month)}</p>
               {invoice.management_fee && (
                 <svg
@@ -163,7 +162,7 @@ export default function InvoiceView() {
                 </svg>
               )}
             </span>
-            <p className="w-3/5 text-right">${invoice.total}</p>
+            <p className="w-2/5 text-right truncate">${invoice.total}</p>
           </li>
         ))}
       </ul>
