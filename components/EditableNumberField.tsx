@@ -45,7 +45,7 @@ export function EditableNumberField({
   return isEditing ? (
     <input
       type="number"
-      className={`form-input px-2 py-1 rounded border mt-1 w-full ${className}`}
+      className={`form-input p-1 rounded border mt-1 w-1/5 ${className}`}
       value={editValue}
       onChange={handleChange}
       onBlur={handleBlur}

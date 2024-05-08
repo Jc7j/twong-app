@@ -38,7 +38,7 @@ export interface InvoiceItem {
   readonly invoice_id: number
   readonly supply_id: number
   quantity: number
-  // price_at_creation: number
+  price_at_creation: number
   supplyItem?: SupplyItem
 }
 

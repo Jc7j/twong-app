@@ -72,7 +72,6 @@ export function DetailedInvoiceView({
       if (invoice.management_fee != editedManagementFee) {
         await updateManagementFee(
           invoice.invoice_id,
-          invoice.total,
           editedManagementFee
         )
       }
@@ -135,7 +134,11 @@ export function DetailedInvoiceView({
         supplyItem: supplyItems.find(
           (item) => item.supply_id === selectedSupplyId
         ),
+        price_at_creation: supplyItems.find(
+          (item) => item.supply_id === selectedSupplyId
+        )
       }
+      // @ts-ignore
       setStagedItems([...stagedItems, newItem])
     }
 
@@ -191,7 +194,7 @@ export function DetailedInvoiceView({
     setIsEditingInvoiceItems(false)
     setIsEditingInvoiceItems(false)
     setStagedItems([])
-    setInvoiceItems([])
+    setInvoiceItems(invoice.invoiceItems)
     setEditedManagementFee(invoice.management_fee)
     setQuantity(1)
     setOpen(false)
@@ -256,7 +259,7 @@ export function DetailedInvoiceView({
                 </span>
                 <p>
                   $
-                  {numToFixedFloat(item.supplyItem?.price as number) *
+                  {numToFixedFloat(item.price_at_creation as number) *
                     item.quantity}
                 </p>
               </span>
