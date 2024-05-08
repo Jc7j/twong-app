@@ -70,10 +70,7 @@ export function DetailedInvoiceView({
     try {
       setIsEditing(false)
       if (invoice.management_fee != editedManagementFee) {
-        await updateManagementFee(
-          invoice.invoice_id,
-          editedManagementFee
-        )
+        await updateManagementFee(invoice.invoice_id, editedManagementFee)
       }
       // Save staged invoice items to the db
       for (const item of stagedItems) {
@@ -136,7 +133,7 @@ export function DetailedInvoiceView({
         ),
         price_at_creation: supplyItems.find(
           (item) => item.supply_id === selectedSupplyId
-        )
+        ),
       }
       // @ts-ignore
       setStagedItems([...stagedItems, newItem])
@@ -158,23 +155,25 @@ export function DetailedInvoiceView({
   async function handleUpdatingInvoiceItems() {
     if (invoiceItems && invoice.invoiceItems) {
       for (const item of invoiceItems) {
-        const originalItem = invoice.invoiceItems.find(i => i.item_id === item.item_id);
-        
+        const originalItem = invoice.invoiceItems.find(
+          (i) => i.item_id === item.item_id
+        )
+
         // Check if the item should be updated or deleted
         if (originalItem) {
           if (item.quantity === 0) {
             // Delete the item if the quantity is zero
-            await deleteInvoiceItem(item.item_id);
+            await deleteInvoiceItem(item.item_id)
           } else if (item.quantity !== originalItem.quantity) {
             // Update the item only if the quantity has changed and is not zero
-            await updateInvoiceItemQuantity(item.item_id, item.quantity);
+            await updateInvoiceItemQuantity(item.item_id, item.quantity)
           }
         }
       }
     } else {
-      console.warn('Invoice items data is not available');
+      console.warn('Invoice items data is not available')
     }
-    setIsEditingInvoiceItems(false);
+    setIsEditingInvoiceItems(false)
   }
 
   function calculatedTaxPrice() {
@@ -270,14 +269,8 @@ export function DetailedInvoiceView({
             handleSave={handleUpdatingInvoiceItems}
             editText="Edit invoice items"
           />
-          {stagedItems.length > 0 && (
-            <>
-              <hr className="mt-4" />
-              <p className="text-accent font-medium text-center">
-                Staged Items
-              </p>
-            </>
-          )}
+          <hr className="mt-4" />
+          <p className="text-accent font-medium text-center">Staged Items</p>
           {stagedItems.map((item) => (
             <div key={item.item_id} className="flex justify-between">
               <span>

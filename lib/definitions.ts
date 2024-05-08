@@ -52,8 +52,3 @@ export type DialogOpen = {
   open: boolean
   setOpen: (open: boolean) => void
 }
-
-// add_invoice_item
-// merge_invoice_items
-// set_price_at_creation
-// update_invoice_total

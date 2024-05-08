@@ -10,3 +10,8 @@ export const useDialogInvoiceOpen = create<DialogOpen>((set) => ({
   open: false,
   setOpen: (open: DialogOpen['open']) => set({ open }),
 }))
+
+export const useDialogNewSupplyOpen = create<DialogOpen>((set) => ({
+  open: false,
+  setOpen: (open: DialogOpen['open']) => set({ open }),
+}))

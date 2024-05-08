@@ -14,6 +14,8 @@ import {
 import { SupplyItem } from '@/lib/definitions'
 import { EditModeToggle } from '../EditModeToggle'
 import { EditableField } from '../EditableField'
+import NewSupplyModal from './NewSupplyModal'
+import { useDialogNewSupplyOpen } from '@/hooks/useDialogOpen'
 
 export default function SuppliesView() {
   const {
@@ -27,6 +29,7 @@ export default function SuppliesView() {
   } = useSupplyStore()
   const [isEditing, setIsEditing] = useState(false)
   const [editableItems, setEditableItems] = useState<SupplyItem[]>([])
+  const { open, setOpen } = useDialogNewSupplyOpen()
 
   useEffect(() => {
     if (supplyItems.length === 0) {
@@ -84,7 +87,14 @@ export default function SuppliesView() {
 
   return (
     <section className="mt-8">
-      <span className="flex">
+      <NewSupplyModal isOpen={open} onOpenChange={setOpen} />
+      <button
+        className="px-5 py-3 text-sm shadow border bg-accent text-background rounded-lg  truncate"
+        onClick={() => setOpen(true)}
+      >
+        Create new Item
+      </button>
+      <span className="flex mt-4 mb-2">
         <EditModeToggle
           isEditing={isEditing}
           setIsEditing={setIsEditing}
@@ -141,7 +151,10 @@ export default function SuppliesView() {
 
           <TableBody>
             {editableItems.map((item, index) => (
-              <TableRow key={item.supply_id} className="flex w-full items-end">
+              <TableRow
+                key={item.supply_id}
+                className="flex w-full items-end py-2"
+              >
                 <TableCell className="flex-grow w-1/5 truncate">
                   {item.link ? (
                     <a

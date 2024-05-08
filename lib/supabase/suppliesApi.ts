@@ -30,8 +30,15 @@ export async function fetchAllSupplyItems(): Promise<SupplyItem[]> {
   return data
 }
 
-export async function addSupplyItem() {
-  const { data, error } = await supabase.from('supply_items').insert([{}])
+export async function addSupplyItem(
+  name: string,
+  price: number,
+  qty: number,
+  link: string
+) {
+  const { data, error } = await supabase
+    .from('supply_items')
+    .insert({ name, price, qty_per_package: qty, link: link })
   if (error) throw new Error('Error adding supply item: ' + error.message)
   return data
 }

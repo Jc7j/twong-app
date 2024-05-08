@@ -73,7 +73,7 @@ export default function InvoiceView() {
 
   if (!selectedProperty) {
     return (
-      <div className="rounded-2xl border p-4 md:w-5/12">
+      <div className="flex justify-center items-center rounded-2xl border p-4 md:w-5/12">
         Select a property to see invoices.
       </div>
     )
@@ -132,7 +132,7 @@ export default function InvoiceView() {
         {selectedProperty.invoices?.map((invoice) => (
           <li
             key={invoice.invoice_id}
-            className="flex justify-between items-center text-black font-medium border-b border-black text-sm pb-1 cursor-pointer w-full"
+            className="flex justify-between items-center mb-3 text-black font-medium border-b border-black text-sm pb-1 cursor-pointer w-full"
             onClick={() => handleInvoiceClick(invoice)}
           >
             <span className="flex items-center w-3/5">

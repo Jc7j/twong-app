@@ -1,7 +1,7 @@
 'use client'
 
 import clsx from 'clsx'
-import React, {  useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Table,
   TableBody,
@@ -20,7 +20,7 @@ function PropertiesView() {
   const { properties, fetchProperties, selectedProperty, setSelectedProperty } =
     usePropertiesStore()
   const { open, setOpen } = useDialogNewPropertyOpen()
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
     if (properties.length === 0) {
@@ -29,24 +29,48 @@ function PropertiesView() {
   }, [properties.length, fetchProperties])
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
+    setSearchTerm(event.target.value)
+  }
 
-  const filteredProperties = properties.filter(property =>
+  const filteredProperties = properties.filter((property) =>
     property.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+  )
 
   return (
     <section className="md:w-7/12 md:mr-8 mt-8 md:mt-0">
       <span className="flex items-center justify-between gap-4">
-      <input
+        <label className="input flex items-center border border-accent rounded-lg w-2/3 px-4 py-2">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g clipPath="url(#clip0_23922_1020)">
+              <path
+                d="M13.125 13.125L9.37506 9.375M10.625 6.25C10.625 8.66625 8.66625 10.625 6.25 10.625C3.83375 10.625 1.875 8.66625 1.875 6.25C1.875 3.83375 3.83375 1.875 6.25 1.875C8.66625 1.875 10.625 3.83375 10.625 6.25Z"
+                stroke="#AAB7B8"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </g>
+            <defs>
+              <clipPath id="clip0_23922_1020">
+                <rect width="15" height="15" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+
+          <input
             type="text"
             placeholder="Search properties..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="px-4 py-2 border border-accent rounded-lg w-2/3"
+            className="border-none outline-none bg-inherit"
           />
+        </label>
         <button
           className="px-5 py-3 text-sm shadow border bg-accent text-background rounded-lg w-1/3 truncate"
           onClick={() => setOpen(true)}
@@ -72,7 +96,7 @@ function PropertiesView() {
             {filteredProperties?.map((property: Property) => (
               <TableRow
                 className={clsx(
-                  'flex w-full text-primary transition-colors hover:bg-accent',
+                  'flex w-full text-primary transition-colors hover:bg-accent py-2',
                   selectedProperty?.property_id === property.property_id &&
                     'bg-accent text-background font-medium'
                 )}
