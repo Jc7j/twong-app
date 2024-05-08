@@ -1,7 +1,7 @@
 'use client'
 
 import clsx from 'clsx'
-import React, { useCallback, useEffect } from 'react'
+import React, {  useEffect, useState } from 'react'
 import {
   Table,
   TableBody,
@@ -20,6 +20,7 @@ function PropertiesView() {
   const { properties, fetchProperties, selectedProperty, setSelectedProperty } =
     usePropertiesStore()
   const { open, setOpen } = useDialogNewPropertyOpen()
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     if (properties.length === 0) {
@@ -27,15 +28,27 @@ function PropertiesView() {
     }
   }, [properties.length, fetchProperties])
 
-  // @TODO: TOTAL is bugged because it takes it from last modified not current month
-  // @TODO: Change COLUMNS
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredProperties = properties.filter(property =>
+    property.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
 
   return (
     <section className="md:w-7/12 md:mr-8 mt-8 md:mt-0">
-      <span className="flex items-center justify-between ">
-        <p className="md:w-1/3">search bar</p>
+      <span className="flex items-center justify-between gap-4">
+      <input
+            type="text"
+            placeholder="Search properties..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="px-4 py-2 border border-accent rounded-lg w-2/3"
+          />
         <button
-          className="px-5 py-3 text-sm shadow border bg-accent text-background rounded-lg"
+          className="px-5 py-3 text-sm shadow border bg-accent text-background rounded-lg w-1/3 truncate"
           onClick={() => setOpen(true)}
         >
           Create New Property
@@ -50,13 +63,13 @@ function PropertiesView() {
                 Name
               </TableHead>
               <TableHead className="flex-grow flex-shrink w-1/3 text-center">
-                Last Modified Invoice
+                Last Modified
               </TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {properties?.map((property: Property) => (
+            {filteredProperties?.map((property: Property) => (
               <TableRow
                 className={clsx(
                   'flex w-full text-primary transition-colors hover:bg-accent',
