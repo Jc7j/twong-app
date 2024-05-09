@@ -52,3 +52,9 @@ export type DialogOpen = {
   open: boolean
   setOpen: (open: boolean) => void
 }
+
+export type DeleteDialogOpen = {
+  deleteOpen: boolean
+  setDeleteOpen: (deleteOpen: boolean) => void
+
+}

@@ -16,7 +16,6 @@ type SupplyStoreState = {
   fetchPaginatedSupplyItems: (page: number) => Promise<void>
   moreAvailable: boolean
   setMoreAvailable: (moreAvailable: boolean) => void
-  addSupplyItem: (item: SupplyItem) => Promise<void>
   updateSupplyItem: (
     supply_id: number,
     updates: Partial<SupplyItem>
@@ -50,19 +49,6 @@ export const useSupplyStore = create<SupplyStoreState>((set, get) => ({
     }
   },
 
-  addSupplyItem: async () => {
-    try {
-      const addedItem = await addSupplyItem()
-
-      if (addedItem) {
-        set((state) => ({
-          supplyItems: [...state.supplyItems, addedItem],
-        }))
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  },
   updateSupplyItem: async (supply_id: number, updates: Partial<SupplyItem>) => {
     try {
       const data = await updateSupplyItem(supply_id, updates)

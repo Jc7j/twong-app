@@ -15,14 +15,14 @@ import { SupplyItem } from '@/lib/definitions'
 import { EditModeToggle } from '../EditModeToggle'
 import { EditableField } from '../EditableField'
 import NewSupplyModal from './NewSupplyModal'
-import { useDialogNewSupplyOpen } from '@/hooks/useDialogOpen'
+import { useDeleteModalOpen, useDialogNewSupplyOpen } from '@/hooks/useDialogOpen'
+import DeleteSupplyItemModal from '../DeleteSupplyItemModal'
 
 export default function SuppliesView() {
   const {
     supplyItems,
     fetchPaginatedSupplyItems,
     updateSupplyItem,
-    deleteSupplyItem,
     currentPage,
     setCurrentPage,
     moreAvailable,
@@ -30,6 +30,8 @@ export default function SuppliesView() {
   const [isEditing, setIsEditing] = useState(false)
   const [editableItems, setEditableItems] = useState<SupplyItem[]>([])
   const { open, setOpen } = useDialogNewSupplyOpen()
+  const {deleteOpen, setDeleteOpen} = useDeleteModalOpen()
+  const [supplyId, setSupplyId] = useState(0)
 
   useEffect(() => {
     if (supplyItems.length === 0) {
@@ -71,9 +73,9 @@ export default function SuppliesView() {
     }
   }
 
-  async function handleDelete(supply_id: number) {
-    await deleteSupplyItem(supply_id)
-    await fetchPaginatedSupplyItems(currentPage)
+  function handleDelete(supply_id: number) {
+    setDeleteOpen(true)
+    setSupplyId(supply_id)
   }
 
   function handleNextPage() {
@@ -88,6 +90,7 @@ export default function SuppliesView() {
   return (
     <section className="mt-8">
       <NewSupplyModal isOpen={open} onOpenChange={setOpen} />
+      <DeleteSupplyItemModal isOpen={deleteOpen} onOpenChange={setDeleteOpen} supplyId={supplyId}/>
       <button
         className="px-5 py-3 text-sm shadow border bg-accent text-background rounded-lg  truncate"
         onClick={() => setOpen(true)}
