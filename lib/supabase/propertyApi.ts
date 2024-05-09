@@ -80,3 +80,15 @@ export async function createNewProperty({
 
   return data
 }
+
+export async function deleteProperty(propertyId: number) {
+  const { error } = await supabase
+    .from('properties')
+    .delete()
+    .match({ property_id: propertyId })
+
+  if (error) {
+    console.error('Error deleting property', error.message)
+    throw new Error('Failed to delete property')
+  }
+}

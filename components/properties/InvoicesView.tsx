@@ -13,6 +13,7 @@ import { useInvoicesStore } from '@/hooks/stores/useInvoiceStore'
 import { createNewInvoice } from '@/lib/supabase/invoiceApi'
 import { fetchAllSupplyItems } from '@/lib/supabase/suppliesApi'
 import { useSupplyStore } from '@/hooks/stores/useSuppliesStore'
+import { deleteProperty } from '@/lib/supabase/propertyApi'
 
 export default function InvoiceView() {
   const { selectedProperty, updatePropertyDetails, fetchProperty } =
@@ -35,20 +36,28 @@ export default function InvoiceView() {
     setIsEditing(false)
     if (!selectedProperty || !selectedProperty.owner) return
 
-    try {
-      await updatePropertyDetails(selectedProperty.property_id, {
-        name: selectedProperty.name,
-        address: selectedProperty.address,
-      })
+    if (selectedProperty.name === '') {
+      try {
+        await deleteProperty(selectedProperty.property_id)
+      } catch (error) {
+        console.error('Failed to delete from DB', error)
+      }
+    } else {
+      try {
+        await updatePropertyDetails(selectedProperty.property_id, {
+          name: selectedProperty.name,
+          address: selectedProperty.address,
+        })
 
-      await updateOwnerDetails(selectedProperty.owner.owner_id, {
-        name: selectedProperty.owner.name,
-        email: selectedProperty.owner.email,
-        phone_number: selectedProperty.owner.phone_number,
-      })
-      await fetchProperty(selectedProperty.property_id)
-    } catch (error) {
-      console.error('Failed to update:', error)
+        await updateOwnerDetails(selectedProperty.owner.owner_id, {
+          name: selectedProperty.owner.name,
+          email: selectedProperty.owner.email,
+          phone_number: selectedProperty.owner.phone_number,
+        })
+        await fetchProperty(selectedProperty.property_id)
+      } catch (error) {
+        console.error('Failed to update:', error)
+      }
     }
   }
 

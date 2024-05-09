@@ -15,7 +15,10 @@ import { SupplyItem } from '@/lib/definitions'
 import { EditModeToggle } from '../EditModeToggle'
 import { EditableField } from '../EditableField'
 import NewSupplyModal from './NewSupplyModal'
-import { useDeleteModalOpen, useDialogNewSupplyOpen } from '@/hooks/useDialogOpen'
+import {
+  useDeleteModalOpen,
+  useDialogNewSupplyOpen,
+} from '@/hooks/useDialogOpen'
 import DeleteSupplyItemModal from '../DeleteSupplyItemModal'
 
 export default function SuppliesView() {
@@ -30,7 +33,7 @@ export default function SuppliesView() {
   const [isEditing, setIsEditing] = useState(false)
   const [editableItems, setEditableItems] = useState<SupplyItem[]>([])
   const { open, setOpen } = useDialogNewSupplyOpen()
-  const {deleteOpen, setDeleteOpen} = useDeleteModalOpen()
+  const { deleteOpen, setDeleteOpen } = useDeleteModalOpen()
   const [supplyId, setSupplyId] = useState(0)
 
   useEffect(() => {
@@ -90,7 +93,11 @@ export default function SuppliesView() {
   return (
     <section className="mt-8">
       <NewSupplyModal isOpen={open} onOpenChange={setOpen} />
-      <DeleteSupplyItemModal isOpen={deleteOpen} onOpenChange={setDeleteOpen} supplyId={supplyId}/>
+      <DeleteSupplyItemModal
+        isOpen={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        supplyId={supplyId}
+      />
       <button
         className="px-5 py-3 text-sm shadow border bg-accent text-background rounded-lg  truncate"
         onClick={() => setOpen(true)}

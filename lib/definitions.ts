@@ -56,5 +56,4 @@ export type DialogOpen = {
 export type DeleteDialogOpen = {
   deleteOpen: boolean
   setDeleteOpen: (deleteOpen: boolean) => void
-
 }
