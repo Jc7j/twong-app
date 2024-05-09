@@ -1,16 +1,8 @@
 'use client'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { useSupplyStore } from '@/hooks/stores/useSuppliesStore'
-import {
-  deleteSupplyItem,
-  fetchPaginatedSupplyItems,
-} from '@/lib/supabase/suppliesApi'
+import { deleteSupplyItem } from '@/lib/supabase/suppliesApi'
 
 interface DeleteModalProps {
   isOpen: boolean
@@ -23,9 +15,7 @@ export default function DeleteSupplyItemModal({
   onOpenChange,
   supplyId,
 }: DeleteModalProps) {
-  const { fetchPaginatedSupplyItems, deleteSupplyItem, currentPage } =
-    useSupplyStore()
-  console.log('delete supplyId', supplyId)
+  const { fetchPaginatedSupplyItems, currentPage } = useSupplyStore()
 
   async function handleDelete() {
     await deleteSupplyItem(supplyId)
@@ -34,7 +24,6 @@ export default function DeleteSupplyItemModal({
     onOpenChange(false)
   }
 
-  console.log('hello')
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -53,7 +42,6 @@ export default function DeleteSupplyItemModal({
             Delete
           </button>
         </span>
-        {/* <button onClick={handleDelete}>close</button> */}
       </DialogContent>
     </Dialog>
   )

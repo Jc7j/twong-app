@@ -121,7 +121,7 @@ export default function InvoiceView() {
           isEditing={isEditing}
         />
       </div>
-      <div className="text-right">
+      <div className="text-right mt-2">
         <EditModeToggle
           isEditing={isEditing}
           setIsEditing={setIsEditing}
@@ -146,7 +146,7 @@ export default function InvoiceView() {
           >
             <span className="flex items-center w-3/5">
               <p className="mr-2">{formatDate(invoice.invoice_month)}</p>
-              {invoice.management_fee && (
+              {invoice.management_fee > 0 && (
                 <svg
                   width="15"
                   height="15"

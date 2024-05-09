@@ -20,7 +20,6 @@ type SupplyStoreState = {
     supply_id: number,
     updates: Partial<SupplyItem>
   ) => Promise<void>
-  deleteSupplyItem: (supply_id: number) => Promise<void>
 }
 
 export const useSupplyStore = create<SupplyStoreState>((set, get) => ({
@@ -58,18 +57,6 @@ export const useSupplyStore = create<SupplyStoreState>((set, get) => ({
         )
         set({ supplyItems: newItems })
       }
-    } catch (error) {
-      console.error(error)
-    }
-  },
-
-  deleteSupplyItem: async (supply_id: number) => {
-    try {
-      await deleteSupplyItem(supply_id)
-      const filteredItems = get().supplyItems.filter(
-        (item) => item.supply_id !== supply_id
-      )
-      set({ supplyItems: filteredItems })
     } catch (error) {
       console.error(error)
     }

@@ -258,8 +258,9 @@ export function DetailedInvoiceView({
                 </span>
                 <p>
                   $
-                  {numToFixedFloat(item.price_at_creation as number) *
-                    item.quantity}
+                  {numToFixedFloat(
+                    (item.price_at_creation as number) * item.quantity
+                  )}
                 </p>
               </span>
             ))}
@@ -280,8 +281,9 @@ export function DetailedInvoiceView({
               {item.quantity && (
                 <span>
                   $
-                  {numToFixedFloat(item.supplyItem?.price as number) ||
-                    0 * item.quantity}
+                  {numToFixedFloat(
+                    (item.supplyItem?.price as number) * item.quantity
+                  )}
                 </span>
               )}
             </div>

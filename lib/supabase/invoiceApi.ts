@@ -98,8 +98,6 @@ export async function updateInvoiceItemQuantity(
     console.error('Error updating invoice item quantity:', error.message)
     throw new Error('Failed to update invoice item quantity.')
   }
-
-  console.log('Invoice item updated successfully:')
 }
 
 export async function deleteInvoiceItem(itemId: number) {

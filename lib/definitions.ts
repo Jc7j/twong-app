@@ -13,16 +13,6 @@ export interface Property {
   owner?: Owner
   invoices?: Invoice[]
 }
-
-export interface SupplyItem {
-  readonly supply_id: number
-  name: string
-  price: number
-  qty_per_package: number
-  link?: string
-  multiplier: number
-}
-
 export interface Invoice {
   readonly invoice_id: number
   readonly property_id: number
@@ -46,6 +36,15 @@ export interface AppState {
   properties: Property[]
   setProperties: (properties: Property[]) => void
   fetchProperties: () => Promise<void>
+}
+
+export interface SupplyItem {
+  readonly supply_id: number
+  name: string
+  price: number
+  qty_per_package: number
+  link?: string
+  multiplier: number
 }
 
 export type DialogOpen = {
