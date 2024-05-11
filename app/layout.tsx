@@ -1,25 +1,12 @@
 import type { Metadata } from 'next'
-import localFont from 'next/font/local'
+import { Inter } from 'next/font/google'
 
 import NavBar from '@/components/NavBar'
 
 import './modern-normalize.css'
 import './globals.css'
 
-const robotoFont = localFont({
-  src: [
-    {
-      path: './fonts/roboto/Roboto-Regular.ttf',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: './fonts/roboto/Roboto-Medium.ttf',
-      weight: '500',
-      style: 'medium',
-    },
-  ],
-})
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Taylor Wong Invoice Tracker',
@@ -33,9 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${robotoFont.className} flex max-h-screen`}>
+      <body className={`${inter.className} md:flex max-h-screen`}>
         <NavBar />
-        {children}
+        <div className="flex-grow md:overflow-auto">
+          {children}
+        </div>
       </body>
     </html>
   )

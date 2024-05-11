@@ -16,8 +16,13 @@ import { useSupplyStore } from '@/hooks/stores/useSuppliesStore'
 import { deleteProperty } from '@/lib/supabase/propertyApi'
 
 export default function InvoiceView() {
-  const { selectedProperty, updatePropertyDetails, fetchProperty } =
-    usePropertiesStore()
+  const {
+    selectedProperty,
+    updatePropertyDetails,
+    fetchProperty,
+    fetchProperties,
+    setSelectedProperty,
+  } = usePropertiesStore()
   const { setSupplyItems } = useSupplyStore()
   const { selectedInvoice, setSelectedInvoice } = useInvoicesStore()
   const { setOpen } = useDialogInvoiceOpen()
@@ -39,6 +44,8 @@ export default function InvoiceView() {
     if (selectedProperty.name === '') {
       try {
         await deleteProperty(selectedProperty.property_id)
+        await fetchProperties()
+        setSelectedProperty(0)
       } catch (error) {
         console.error('Failed to delete from DB', error)
       }
@@ -131,7 +138,7 @@ export default function InvoiceView() {
 
       <div className="my-2">
         <button
-          className="w-full py-3 text-sm shadow border bg-accent text-background rounded-lg"
+          className="w-full py-3 text-sm shadow border bg-accent font-medium text-background rounded-lg"
           onClick={handleCreateNewInvoiceClick}
         >
           Create new invoice

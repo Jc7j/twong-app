@@ -25,7 +25,7 @@ type SupplyStoreState = {
 export const useSupplyStore = create<SupplyStoreState>((set, get) => ({
   supplyItems: [],
   currentPage: 0,
-  itemsPerPage: 20,
+  itemsPerPage: 15,
   moreAvailable: true,
   setMoreAvailable: (moreAvailable: boolean) => set({ moreAvailable }),
 

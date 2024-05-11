@@ -39,13 +39,14 @@ function PropertiesView() {
   return (
     <section className="md:w-7/12 md:mr-8 mt-8 md:mt-0">
       <span className="flex items-center justify-between gap-4">
-        <label className="input flex items-center border border-accent rounded-lg w-2/3 px-4 py-2">
+        <label className="input flex items-center border border-accent rounded-full md:w-1/3 px-4 py-3">
           <svg
             width="15"
             height="15"
             viewBox="0 0 15 15"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            className="flex-shrink-0 w-4 h-4 mr-2"
           >
             <g clipPath="url(#clip0_23922_1020)">
               <path
@@ -68,11 +69,11 @@ function PropertiesView() {
             placeholder="Search properties..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="border-none outline-none bg-inherit"
+            className="flex-grow border-none outline-none bg-inherit truncate"
           />
         </label>
         <button
-          className="px-5 py-3 text-sm shadow border bg-accent text-background rounded-lg w-1/3 truncate"
+          className="px-5 py-4 text-sm shadow border bg-accent font-medium text-background rounded-lg md:w-1/5 truncate"
           onClick={() => setOpen(true)}
         >
           Create New Property
@@ -96,7 +97,7 @@ function PropertiesView() {
             {filteredProperties?.map((property: Property) => (
               <TableRow
                 className={clsx(
-                  'flex w-full text-primary transition-colors hover:bg-accent py-2',
+                  'flex w-full text-primary transition-colors hover:bg-accent py-2 rounded-e-full',
                   selectedProperty?.property_id === property.property_id &&
                     'bg-accent text-background font-medium'
                 )}

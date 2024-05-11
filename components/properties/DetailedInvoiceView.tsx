@@ -349,7 +349,7 @@ export function DetailedInvoiceView({
         <span className="flex justify-between items-end">
           <button
             onClick={handleSave}
-            className="mt-4 px-3 py-1 bg-accent text-background rounded text-sm"
+            className="mt-4 px-3 py-1 bg-accent font-medium text-background rounded text-sm"
           >
             Save invoice changes
           </button>

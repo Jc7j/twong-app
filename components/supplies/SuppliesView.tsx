@@ -98,12 +98,6 @@ export default function SuppliesView() {
         onOpenChange={setDeleteOpen}
         supplyId={supplyId}
       />
-      <button
-        className="px-5 py-3 text-sm shadow border bg-accent text-background rounded-lg  truncate"
-        onClick={() => setOpen(true)}
-      >
-        Create new Item
-      </button>
       <span className="flex mt-4 mb-2">
         <EditModeToggle
           isEditing={isEditing}
@@ -130,6 +124,12 @@ export default function SuppliesView() {
             disabled={!moreAvailable}
           >
             Next
+          </button>
+          <button
+            className="ml-8 px-5 py-3 text-sm shadow border bg-accent font-medium text-background rounded-lg  truncate"
+            onClick={() => setOpen(true)}
+          >
+            Create new Item
           </button>
         </div>
       </span>
