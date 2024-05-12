@@ -1,4 +1,3 @@
-// import CreateNewCta from '@/components/CreateNewCta'
 import SuppliesView from '@/components/supplies/SuppliesView'
 
 export default function Supplies() {

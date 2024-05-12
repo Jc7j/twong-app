@@ -1,8 +1,6 @@
 import { create } from 'zustand'
 import {
-  addSupplyItem,
   updateSupplyItem,
-  deleteSupplyItem,
   fetchPaginatedSupplyItems,
 } from '@/lib/supabase/suppliesApi'
 import { SupplyItem } from '@/lib/definitions'

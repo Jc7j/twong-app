@@ -32,12 +32,6 @@ export interface InvoiceItem {
   supplyItem?: SupplyItem
 }
 
-export interface AppState {
-  properties: Property[]
-  setProperties: (properties: Property[]) => void
-  fetchProperties: () => Promise<void>
-}
-
 export interface SupplyItem {
   readonly supply_id: number
   name: string
@@ -45,6 +39,12 @@ export interface SupplyItem {
   qty_per_package: number
   link?: string
   multiplier: number
+}
+
+export interface AppState {
+  properties: Property[]
+  setProperties: (properties: Property[]) => void
+  fetchProperties: () => Promise<void>
 }
 
 export type DialogOpen = {

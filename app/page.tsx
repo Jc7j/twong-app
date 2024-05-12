@@ -7,7 +7,6 @@ export default function Home() {
       <div className="md:mt-16 flex-grow-0">
         <span className="flex items-end">
           <h1 className="pr-6 text-4xl font-medium">Properties</h1>
-          <p>download invoices</p>
         </span>
       </div>
 

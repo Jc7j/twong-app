@@ -1,7 +1,4 @@
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { deleteInvoice } from '@/lib/supabase/invoiceApi'
-import { deleteProperty, fetchProperties } from '@/lib/supabase/propertyApi'
-import { deleteSupplyItem } from '@/lib/supabase/suppliesApi'
 
 interface DeletePopupProps {
   fetchFn: () => void

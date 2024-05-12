@@ -11,7 +11,7 @@ export default function NavBar() {
 
   return (
     <nav className="md:h-screen mb-8 border-b md:mr-8 md:w-[250px] bg-white text-secondary text-xl md:border-r border-border">
-      <ul className="font-medium h-14 border-t border-border md:mt-24 flex justify-between items-center flex-row px-2 md:px-0 md:items-start md:flex-col md:pl-8 md:pt-8">
+      <ul className="font-medium h-14 border-t border-border md:mt-24 flex justify-around md:justify-between items-center flex-row px-2 md:px-0 md:items-start md:flex-col md:pl-8 md:pt-8">
         <li>
           <Link href="/" className={clsx(pathname === '/' && activeLink)}>
             Home

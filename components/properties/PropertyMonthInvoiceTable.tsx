@@ -34,7 +34,6 @@ export default function PropertyMonthInvoiceTable() {
       const date = new Date(parseInt(year), parseInt(month) - 1)
       setSelectedMonth(date)
       setError(null)
-      console.log('Selected Month:', date)
     } else {
       setError('Invalid date format. Please use MM/YYYY format.')
       setSelectedMonth(null)

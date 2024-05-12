@@ -28,6 +28,28 @@ export async function fetchInvoicesByPropertyId(
   return invoices
 }
 
+export async function fetchInvoices(date: Date) {
+  const month = date.getMonth() + 1
+  const year = date.getFullYear()
+  const invoiceMonth = `${year}-${month}-05`
+
+  const { data, error } = await supabase
+    .from('invoices')
+    .select(
+      `total, management_fee, invoice_month,  invoice_items(price_at_creation, quantity, supply_items(name)),
+      properties(name, address)
+      `
+    )
+    .eq('invoice_month', invoiceMonth)
+    .order('properties(name)', { ascending: true })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return data
+}
+
 export async function createNewInvoice(property_id: number): Promise<Invoice> {
   const { data, error } = await supabase
     .from('invoices')

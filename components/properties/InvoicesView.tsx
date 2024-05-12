@@ -22,14 +22,12 @@ export default function InvoiceView() {
     updatePropertyDetails,
     fetchProperty,
     fetchProperties,
-    setSelectedProperty,
   } = usePropertiesStore()
   const { setSupplyItems } = useSupplyStore()
   const { selectedInvoice, setSelectedInvoice } = useInvoicesStore()
   const { setOpen } = useDialogInvoiceOpen()
 
   const [isEditing, setIsEditing] = useState(false)
-  const [doubleCheckDeletion, setDoubleCheckDeletion] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
 
   useEffect(() => {
