@@ -22,9 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} md:flex max-h-screen`}>
         <NavBar />
-        <div className="flex-grow md:overflow-auto">
-          {children}
-        </div>
+        <div className="flex-grow md:overflow-auto">{children}</div>
       </body>
     </html>
   )

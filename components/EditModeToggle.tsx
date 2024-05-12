@@ -16,7 +16,7 @@ export function EditModeToggle({
   return isEditing ? (
     <button
       onClick={handleSave}
-      className="px-3 py-1 bg-accent text-background rounded text-sm"
+      className="px-3 py-1 bg-accent text-background rounded-lg text-sm"
     >
       Save changes
     </button>

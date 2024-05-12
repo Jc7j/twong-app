@@ -111,3 +111,15 @@ export async function deleteInvoiceItem(itemId: number) {
     throw new Error('Failed to delete invoice item')
   }
 }
+
+export async function deleteInvoice(invoiceId: number) {
+  const { error } = await supabase
+    .from('invoices')
+    .delete()
+    .match({ invoice_id: invoiceId })
+
+  if (error) {
+    console.error('Error deleting invoice', error.message)
+    throw new Error('Failed to delete invoice')
+  }
+}

@@ -30,15 +30,12 @@ export function EditableNumberField({
   }, [value])
 
   function handleBlur() {
-    // Convert the input string back to a number when emitting changes outside
     const numValue = parseFloat(editValue)
     onChange(isNaN(numValue) ? 0 : numValue)
-    // Reset editValue to the original value on blur to discard uncommitted changes
     setEditValue(value.toString())
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    // Update local state to reflect the input element's current value
     setEditValue(e.target.value)
   }
 

@@ -16,6 +16,7 @@ import {
 } from '@/lib/utils'
 import {
   addInvoiceItem,
+  deleteInvoice,
   deleteInvoiceItem,
   updateInvoiceItemQuantity,
   updateInvoiceMonth,
@@ -28,6 +29,7 @@ import { usePropertiesStore } from '@/hooks/stores/usePropertiesStore'
 import { useDialogInvoiceOpen } from '@/hooks/useDialogOpen'
 import { useSupplyStore } from '@/hooks/stores/useSuppliesStore'
 import { EditableNumberField } from '../EditableNumberField'
+import DeletePopup from '../DeletePopup'
 
 interface DetailedInvoiceViewProps {
   invoice: Invoice
@@ -53,6 +55,7 @@ export function DetailedInvoiceView({
   const [editedManagementFee, setEditedManagementFee] = useState<number>(
     invoice.management_fee
   )
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   useEffect(() => {
     const formattedMonth = formatDate(new Date(invoice.invoice_month))
@@ -201,6 +204,13 @@ export function DetailedInvoiceView({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DeletePopup
+        isOpen={dialogOpen}
+        onOpenChange={setDialogOpen}
+        id={invoice.invoice_id}
+        deleteFn={() => deleteInvoice(invoice.invoice_id)}
+        fetchFn={() => fetchProperty(selectedProperty.property_id)}
+      />
       <DialogContent>
         <DialogHeader>
           <h2 className="text-2xl font-medium">{property.name}</h2>
@@ -346,16 +356,22 @@ export function DetailedInvoiceView({
           </span>
         </DialogFooter>
         <hr />
-        <span className="flex justify-between items-end">
+        <p className="text-sm text-secondary text-center">
+          Last Modified {formatDateWithTime(invoice.last_modified)}
+        </p>
+        <span className="flex justify-between items-end mt-4">
           <button
             onClick={handleSave}
-            className="mt-4 px-3 py-1 bg-accent font-medium text-background rounded text-sm"
+            className=" px-3 py-1 bg-accent font-medium text-background rounded text-sm"
           >
-            Save invoice changes
+            Save changes
           </button>
-          <p className="text-sm text-secondary text-center">
-            Last Modified {formatDateWithTime(invoice.last_modified)}
-          </p>
+          <button
+            className="ml-2 text-sm text-secondary underline underline-offset-2 hover:text-accent transition"
+            onClick={() => setDialogOpen(true)}
+          >
+            delete invoice
+          </button>
         </span>
       </DialogContent>
     </Dialog>

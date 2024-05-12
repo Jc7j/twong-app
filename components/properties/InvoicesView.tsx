@@ -14,6 +14,7 @@ import { createNewInvoice } from '@/lib/supabase/invoiceApi'
 import { fetchAllSupplyItems } from '@/lib/supabase/suppliesApi'
 import { useSupplyStore } from '@/hooks/stores/useSuppliesStore'
 import { deleteProperty } from '@/lib/supabase/propertyApi'
+import DeletePopup from '../DeletePopup'
 
 export default function InvoiceView() {
   const {
@@ -28,12 +29,15 @@ export default function InvoiceView() {
   const { setOpen } = useDialogInvoiceOpen()
 
   const [isEditing, setIsEditing] = useState(false)
+  const [doubleCheckDeletion, setDoubleCheckDeletion] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetchAllSupplyItems()
       setSupplyItems(res)
     }
+
     fetchData()
   }, [setSupplyItems])
 
@@ -41,30 +45,20 @@ export default function InvoiceView() {
     setIsEditing(false)
     if (!selectedProperty || !selectedProperty.owner) return
 
-    if (selectedProperty.name === '') {
-      try {
-        await deleteProperty(selectedProperty.property_id)
-        await fetchProperties()
-        setSelectedProperty(0)
-      } catch (error) {
-        console.error('Failed to delete from DB', error)
-      }
-    } else {
-      try {
-        await updatePropertyDetails(selectedProperty.property_id, {
-          name: selectedProperty.name,
-          address: selectedProperty.address,
-        })
+    try {
+      await updatePropertyDetails(selectedProperty.property_id, {
+        name: selectedProperty.name,
+        address: selectedProperty.address,
+      })
 
-        await updateOwnerDetails(selectedProperty.owner.owner_id, {
-          name: selectedProperty.owner.name,
-          email: selectedProperty.owner.email,
-          phone_number: selectedProperty.owner.phone_number,
-        })
-        await fetchProperty(selectedProperty.property_id)
-      } catch (error) {
-        console.error('Failed to update:', error)
-      }
+      await updateOwnerDetails(selectedProperty.owner.owner_id, {
+        name: selectedProperty.owner.name,
+        email: selectedProperty.owner.email,
+        phone_number: selectedProperty.owner.phone_number,
+      })
+      await fetchProperty(selectedProperty.property_id)
+    } catch (error) {
+      console.error('Failed to update:', error)
     }
   }
 
@@ -97,6 +91,13 @@ export default function InvoiceView() {
 
   return (
     <section className="rounded-2xl border p-4 md:w-5/12">
+      <DeletePopup
+        isOpen={dialogOpen}
+        onOpenChange={setDialogOpen}
+        id={selectedProperty.property_id}
+        deleteFn={() => deleteProperty(selectedProperty.property_id)}
+        fetchFn={() => fetchProperties()}
+      />
       <EditableField
         value={selectedProperty.name ?? ''}
         onChange={(value: string) => (selectedProperty.name = value)}
@@ -134,6 +135,12 @@ export default function InvoiceView() {
           setIsEditing={setIsEditing}
           handleSave={handleSave}
         />
+        <button
+          className="ml-2 text-sm text-secondary underline underline-offset-2 hover:text-accent transition"
+          onClick={() => setDialogOpen(true)}
+        >
+          delete property
+        </button>
       </div>
 
       <div className="my-2">

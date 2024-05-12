@@ -39,7 +39,7 @@ function PropertiesView() {
   return (
     <section className="md:w-7/12 md:mr-8 mt-8 md:mt-0">
       <span className="flex items-center justify-between gap-4">
-        <label className="input flex items-center border border-accent rounded-full md:w-1/3 px-4 py-3">
+        <label className="input flex items-center border border-accent rounded-full px-4 py-3">
           <svg
             width="15"
             height="15"
@@ -73,7 +73,7 @@ function PropertiesView() {
           />
         </label>
         <button
-          className="px-5 py-4 text-sm shadow border bg-accent font-medium text-background rounded-lg md:w-1/5 truncate"
+          className="px-5 py-4 text-sm shadow border bg-accent font-medium text-background rounded-lg md:w-auto truncate"
           onClick={() => setOpen(true)}
         >
           Create New Property
@@ -97,9 +97,9 @@ function PropertiesView() {
             {filteredProperties?.map((property: Property) => (
               <TableRow
                 className={clsx(
-                  'flex w-full text-primary transition-colors hover:bg-accent py-2 rounded-e-full',
+                  'flex w-full text-primary transition-colors hover:bg-accent py-2',
                   selectedProperty?.property_id === property.property_id &&
-                    'bg-accent text-background font-medium'
+                    'bg-accent text-background font-medium shadow-inner'
                 )}
                 key={property.property_id}
                 onClick={() => setSelectedProperty(property.property_id)}

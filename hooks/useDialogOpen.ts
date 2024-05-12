@@ -15,8 +15,3 @@ export const useDialogNewSupplyOpen = create<DialogOpen>((set) => ({
   open: false,
   setOpen: (open: DialogOpen['open']) => set({ open }),
 }))
-
-export const useDeleteModalOpen = create<DeleteDialogOpen>((set) => ({
-  deleteOpen: false,
-  setDeleteOpen: (deleteOpen: DialogOpen['open']) => set({ deleteOpen }),
-}))

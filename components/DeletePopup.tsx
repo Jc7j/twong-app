@@ -1,31 +1,37 @@
-'use client'
-
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { useSupplyStore } from '@/hooks/stores/useSuppliesStore'
+import { deleteInvoice } from '@/lib/supabase/invoiceApi'
+import { deleteProperty, fetchProperties } from '@/lib/supabase/propertyApi'
 import { deleteSupplyItem } from '@/lib/supabase/suppliesApi'
 
-interface DeleteModalProps {
+interface DeletePopupProps {
+  fetchFn: () => void
+  deleteFn: () => void
+  id: number
   isOpen: boolean
   onOpenChange: (isOpen: boolean) => void
-  supplyId: number
 }
 
-export default function DeleteSupplyItemModal({
+export default function DeletePopup({
+  deleteFn,
+  fetchFn,
+  id,
   isOpen,
   onOpenChange,
-  supplyId,
-}: DeleteModalProps) {
-  const { fetchPaginatedSupplyItems, currentPage } = useSupplyStore()
+}: DeletePopupProps) {
+  function handleOnOpenChange() {
+    onOpenChange(false)
+  }
 
   async function handleDelete() {
-    await deleteSupplyItem(supplyId)
-    await fetchPaginatedSupplyItems(currentPage)
-    supplyId = 0
+    await deleteFn()
+    await fetchFn()
+
+    id = 0
     onOpenChange(false)
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handleOnOpenChange}>
       <DialogContent>
         <DialogTitle>Are you sure?</DialogTitle>
         <span>

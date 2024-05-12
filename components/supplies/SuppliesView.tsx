@@ -15,11 +15,9 @@ import { SupplyItem } from '@/lib/definitions'
 import { EditModeToggle } from '../EditModeToggle'
 import { EditableField } from '../EditableField'
 import NewSupplyModal from './NewSupplyModal'
-import {
-  useDeleteModalOpen,
-  useDialogNewSupplyOpen,
-} from '@/hooks/useDialogOpen'
-import DeleteSupplyItemModal from '../DeleteSupplyItemModal'
+import { useDialogNewSupplyOpen } from '@/hooks/useDialogOpen'
+import DeletePopup from '../DeletePopup'
+import { deleteSupplyItem } from '@/lib/supabase/suppliesApi'
 
 export default function SuppliesView() {
   const {
@@ -33,8 +31,8 @@ export default function SuppliesView() {
   const [isEditing, setIsEditing] = useState(false)
   const [editableItems, setEditableItems] = useState<SupplyItem[]>([])
   const { open, setOpen } = useDialogNewSupplyOpen()
-  const { deleteOpen, setDeleteOpen } = useDeleteModalOpen()
   const [supplyId, setSupplyId] = useState(0)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   useEffect(() => {
     if (supplyItems.length === 0) {
@@ -76,9 +74,9 @@ export default function SuppliesView() {
     }
   }
 
-  function handleDelete(supply_id: number) {
-    setDeleteOpen(true)
-    setSupplyId(supply_id)
+  function handleOpenChange(supplyId: number) {
+    setSupplyId(supplyId)
+    setDialogOpen(true)
   }
 
   function handleNextPage() {
@@ -93,10 +91,12 @@ export default function SuppliesView() {
   return (
     <section className="mt-8">
       <NewSupplyModal isOpen={open} onOpenChange={setOpen} />
-      <DeleteSupplyItemModal
-        isOpen={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        supplyId={supplyId}
+      <DeletePopup
+        isOpen={dialogOpen}
+        onOpenChange={setDialogOpen}
+        id={supplyId}
+        deleteFn={() => deleteSupplyItem(supplyId)}
+        fetchFn={() => fetchPaginatedSupplyItems(currentPage)}
       />
       <span className="flex mt-4 mb-2">
         <EditModeToggle
@@ -194,14 +194,17 @@ export default function SuppliesView() {
                   )}
                 </TableCell>
                 <TableCell className="flex-grow w-1/5 truncate text-center">
-                  <EditableField
-                    value={item.price.toString()}
-                    onChange={(value: string) =>
-                      handleEditField(index, 'price', value)
-                    }
-                    isEditing={isEditing}
-                    as="div"
-                  />
+                  <p className="flex items-end justify-center">
+                    $
+                    <EditableField
+                      value={item.price.toString()}
+                      onChange={(value: string) =>
+                        handleEditField(index, 'price', value)
+                      }
+                      isEditing={isEditing}
+                      as="div"
+                    />
+                  </p>
                 </TableCell>
                 <TableCell className="flex-grow w-1/5 truncate text-center">
                   <EditableField
@@ -228,7 +231,7 @@ export default function SuppliesView() {
                 {isEditing && (
                   <TableCell className="flex-grow w-1/5 truncate text-right">
                     <button
-                      onClick={() => handleDelete(item.supply_id)}
+                      onClick={() => handleOpenChange(item.supply_id)}
                       className="text-accent underline underline-offset-2 text-sm"
                     >
                       delete
