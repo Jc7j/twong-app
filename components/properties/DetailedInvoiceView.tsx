@@ -175,7 +175,6 @@ export function DetailedInvoiceView({
     const value = parseInt(e.target.value);
     setSelectedSupplyId(value);
 
-    // Check if "other..." is selected
     if (value === -1) {
       setIsOtherSelected(true);
     } else {
@@ -247,15 +246,6 @@ export function DetailedInvoiceView({
               />
             </span>
           </span>
-          {/* <div>{editedManagementFee && 
-          <input 
-            type="text"
-            value={repairText}
-            onChange={(e) => 
-              setRepairText(e.target.value)
-            }
-          />
-          }</div> */}
           {invoiceItems &&
             invoiceItems.map((item, index) => (
               <span
@@ -297,7 +287,7 @@ export function DetailedInvoiceView({
                 <span>
                   $
                   {numToFixedFloat(
-                    (item.supplyItem?.price as number) * item.quantity
+                    ((item.supplyItem?.price as number) || otherValue.price) * item.quantity
                   )}
                 </span>
               )}
@@ -343,7 +333,7 @@ export function DetailedInvoiceView({
                       />
                       <input
                         type="number"
-                        value={otherValue.price}
+                        value={otherValue.price || "Price"}
                         onChange={(e) =>
                           setOtherValue({ ...otherValue, price: parseFloat(e.target.value) })
                         }
