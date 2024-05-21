@@ -9,6 +9,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import {
+  calculateTotalWithTax,
   formatDate,
   formatDateToISO,
   formatDateWithTime,
@@ -48,20 +49,20 @@ export function DetailedInvoiceView({
   const [isEditingInvoiceItems, setIsEditingInvoiceItems] = useState(false)
   const [addingItem, setAddingItem] = useState(false)
   const [editedMonth, setEditedMonth] = useState('')
-  const [selectedSupplyId, setSelectedSupplyId] = useState<number | null>(null)
+  const [selectedSupplyId, setSelectedSupplyId] = useState<number | null>(supplyItems.length ? supplyItems[0].supply_id : null)
   const [quantity, setQuantity] = useState(1)
   const [invoiceItems, setInvoiceItems] = useState(invoice.invoiceItems)
   const [stagedItems, setStagedItems] = useState<InvoiceItem[]>([])
-  const [editedManagementFee, setEditedManagementFee] = useState<number>(
-    invoice.management_fee
-  )
+  const [editedManagementFee, setEditedManagementFee] = useState<number>(invoice.management_fee)
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [isOtherSelected, setIsOtherSelected] = useState(false);
+  const [otherValue, setOtherValue] = useState({name: '', price: 0});
 
   useEffect(() => {
     const formattedMonth = formatDate(new Date(invoice.invoice_month))
     setEditedMonth(formattedMonth)
     setEditedManagementFee(invoice.management_fee)
-    setSelectedSupplyId(supplyItems[0].supply_id)
+    setSelectedSupplyId(supplyItems.length ? supplyItems[0].supply_id : null)
     setInvoiceItems(invoice.invoiceItems)
   }, [invoice, supplyItems])
 
@@ -75,18 +76,20 @@ export function DetailedInvoiceView({
       if (invoice.management_fee != editedManagementFee) {
         await updateManagementFee(invoice.invoice_id, editedManagementFee)
       }
-      // Save staged invoice items to the db
       for (const item of stagedItems) {
         if (item.quantity > 0) {
           await addInvoiceItem(
             invoice.invoice_id,
-            item.supply_id,
-            item.quantity
+            item.name || otherValue.name,
+            item.quantity,
+            item.price_at_creation || otherValue.price
           )
         }
       }
       await fetchProperty(selectedProperty?.property_id as number)
       setEditedManagementFee(0)
+      setOtherValue({name: '', price: 0})
+      setIsOtherSelected(false)
       setStagedItems([])
       setOpen(false)
     } catch (error) {
@@ -101,10 +104,7 @@ export function DetailedInvoiceView({
       const isoDate = formatDateToISO(editedMonth)
       try {
         setIsEditing(false)
-        const newUpdatedMonth = await updateInvoiceMonth(
-          invoice.invoice_id,
-          isoDate
-        )
+        const newUpdatedMonth = await updateInvoiceMonth(invoice.invoice_id, isoDate)
         setEditedMonth(formatDate(newUpdatedMonth))
       } catch (error) {
         console.error('Error updating invoice:', error)
@@ -114,9 +114,7 @@ export function DetailedInvoiceView({
   }
 
   function handleAddItem() {
-    const existingItemIndex = stagedItems.findIndex(
-      (item) => item.supply_id === selectedSupplyId
-    )
+    const existingItemIndex = stagedItems.findIndex((item) => item.supply_id === selectedSupplyId)
 
     if (existingItemIndex >= 0) {
       const newStagedItems = [...stagedItems]
@@ -127,16 +125,12 @@ export function DetailedInvoiceView({
       setStagedItems(newStagedItems)
     } else {
       const newItem = {
-        item_id: Date.now(),
         invoice_id: invoice.invoice_id,
         supply_id: selectedSupplyId as number,
         quantity,
-        supplyItem: supplyItems.find(
-          (item) => item.supply_id === selectedSupplyId
-        ),
-        price_at_creation: supplyItems.find(
-          (item) => item.supply_id === selectedSupplyId
-        ),
+        name: supplyItems.find((item) => item.supply_id === selectedSupplyId)?.name,
+        price_at_creation: supplyItems.find((item) => item.supply_id === selectedSupplyId)?.price,
+        supplyItem: supplyItems.find((item) => item.supply_id === selectedSupplyId),
       }
       // @ts-ignore
       setStagedItems([...stagedItems, newItem])
@@ -158,9 +152,7 @@ export function DetailedInvoiceView({
   async function handleUpdatingInvoiceItems() {
     if (invoiceItems && invoice.invoiceItems) {
       for (const item of invoiceItems) {
-        const originalItem = invoice.invoiceItems.find(
-          (i) => i.item_id === item.item_id
-        )
+        const originalItem = invoice.invoiceItems.find((i) => i.item_id === item.item_id)
 
         // Check if the item should be updated or deleted
         if (originalItem) {
@@ -179,14 +171,16 @@ export function DetailedInvoiceView({
     setIsEditingInvoiceItems(false)
   }
 
-  function calculatedTaxPrice() {
-    const invoiceTotal = invoice.total
-    const invoiceManagementFee = invoice.management_fee
-    const taxableAmount = invoiceTotal - invoiceManagementFee
-    const nevadaTax = 0.08375
-    const taxedAmount = taxableAmount * nevadaTax
-    const finalAmount = (taxableAmount - taxedAmount) * nevadaTax
-    return Math.ceil(finalAmount * 100) / 100
+  function handleSelectChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const value = parseInt(e.target.value);
+    setSelectedSupplyId(value);
+
+    // Check if "other..." is selected
+    if (value === -1) {
+      setIsOtherSelected(true);
+    } else {
+      setIsOtherSelected(false);
+    }
   }
 
   function handleOpenChange() {
@@ -199,6 +193,8 @@ export function DetailedInvoiceView({
     setInvoiceItems(invoice.invoiceItems)
     setEditedManagementFee(invoice.management_fee)
     setQuantity(1)
+    setIsOtherSelected(false)
+    setOtherValue({name: '', price: 0})
     setOpen(false)
   }
 
@@ -238,7 +234,7 @@ export function DetailedInvoiceView({
         <div className="h-[250px] overflow-y-auto ">
           <h3 className="text-xl font-medium">Charges and Reimbursements</h3>
           <span className="flex justify-between font-normal">
-            <p className="">Property Management Fee</p>
+            <p>Property Management Fee</p>
             <span className="w-1/5 flex">
               $
               <input
@@ -251,11 +247,20 @@ export function DetailedInvoiceView({
               />
             </span>
           </span>
+          {/* <div>{editedManagementFee && 
+          <input 
+            type="text"
+            value={repairText}
+            onChange={(e) => 
+              setRepairText(e.target.value)
+            }
+          />
+          }</div> */}
           {invoiceItems &&
             invoiceItems.map((item, index) => (
               <span
                 className="flex justify-between items-end"
-                key={item.item_id}
+                key={item.item_id || index}
               >
                 <span>
                   <EditableNumberField
@@ -264,7 +269,7 @@ export function DetailedInvoiceView({
                     isEditing={isEditingInvoiceItems}
                     className="inline text-sm mr-1 w-1/3"
                   />
-                  <p className="inline">{item.supplyItem?.name}</p>
+                  <p className="inline">{item.name}</p>
                 </span>
                 <p>
                   $
@@ -282,11 +287,11 @@ export function DetailedInvoiceView({
           />
           <hr className="mt-4" />
           <p className="text-accent font-medium text-center">Staged Items</p>
-          {stagedItems.map((item) => (
-            <div key={item.item_id} className="flex justify-between">
+          {stagedItems.map((item, index) => (
+            <div key={item.item_id || index} className="flex justify-between">
               <span>
                 <p className="inline text-sm mr-1">x{item.quantity}</p>
-                <p className="inline">{item.supplyItem?.name}</p>
+                <p className="inline">{item.supplyItem?.name || otherValue.name}</p>
               </span>
               {item.quantity && (
                 <span>
@@ -314,9 +319,7 @@ export function DetailedInvoiceView({
                   <p className="text-sm text-accent">Item:</p>
                   <select
                     value={selectedSupplyId as number}
-                    onChange={(e) =>
-                      setSelectedSupplyId(parseInt(e.target.value))
-                    }
+                    onChange={handleSelectChange}
                     className="border-accent truncate "
                     autoFocus
                   >
@@ -325,7 +328,30 @@ export function DetailedInvoiceView({
                         {item.name}
                       </option>
                     ))}
+                    <option value={-1}>Other...</option>
                   </select>
+                  {isOtherSelected && (
+                    <>
+                      <input
+                        type="text"
+                        value={otherValue.name}
+                        onChange={(e) =>
+                          setOtherValue({ ...otherValue, name: e.target.value })
+                        }
+                        placeholder="Please specify"
+                        className="border-accent"
+                      />
+                      <input
+                        type="number"
+                        value={otherValue.price}
+                        onChange={(e) =>
+                          setOtherValue({ ...otherValue, price: parseFloat(e.target.value) })
+                        }
+                        placeholder="Price"
+                        className="border-accent mt-1"
+                      />
+                    </>
+                  )}
                 </span>
               </div>
               <button
@@ -348,7 +374,7 @@ export function DetailedInvoiceView({
         <DialogFooter className="flex flex-col">
           <span className="flex justify-between items-end">
             <p className="text-xs text-primary">taxes (8.375%)</p>
-            <p>${calculatedTaxPrice()}</p>
+            <p>${invoice.invoiceItems && calculateTotalWithTax(invoice.invoiceItems).toFixed(2)}</p>
           </span>
           <span className="flex justify-between items-end">
             <p className="text-xl mt-3">Total:</p>

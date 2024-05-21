@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { InvoiceItem } from './definitions'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -69,3 +70,10 @@ export function numToFixedFloat(num: number): number {
   const res = parseFloat(num.toString())
   return parseFloat(res.toFixed(2))
 }
+
+export function calculateTotalWithTax(items: InvoiceItem[]){
+  const nevadaTax = 0.08375
+  return items.reduce((total, item) => {
+     return total + (item.price_at_creation * nevadaTax);
+  }, 0);
+};

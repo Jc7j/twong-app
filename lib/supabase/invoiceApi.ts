@@ -96,12 +96,13 @@ export async function updateManagementFee(
 
 export async function addInvoiceItem(
   invoiceId: number,
-  supplyId: number,
-  quantity: number
+  name: string,
+  quantity: number,
+  price_at_creation: number
 ) {
   const { error } = await supabase
     .from('invoice_items')
-    .insert({ invoice_id: invoiceId, supply_id: supplyId, quantity })
+    .insert({ invoice_id: invoiceId, quantity, name, price_at_creation })
   if (error) throw new Error('Failed to add invoice item')
 }
 

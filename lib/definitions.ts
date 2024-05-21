@@ -27,6 +27,7 @@ export interface InvoiceItem {
   readonly item_id: number
   readonly invoice_id: number
   readonly supply_id: number
+  name: string
   quantity: number
   price_at_creation: number
   supplyItem?: SupplyItem
