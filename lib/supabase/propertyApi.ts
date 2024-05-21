@@ -8,7 +8,7 @@ export async function fetchProperties(): Promise<Property[]> {
       `
       *,
       owner:owners(*),
-      invoices:invoices(*, invoiceItems:invoice_items(*, supplyItem:supply_items(*)))
+      invoices:invoices(*, invoiceItems:invoice_items(*))
     `
     )
     .order('name', { ascending: true })
@@ -28,7 +28,7 @@ export async function fetchPropertyById(propertyId: number): Promise<Property> {
       `
       *,
       owner:owners(*),
-      invoices:invoices(*, invoiceItems:invoice_items(*, supplyItem:supply_items(*)))
+      invoices:invoices(*, invoiceItems:invoice_items(*))
     `
     )
     .eq('property_id', propertyId)

@@ -16,9 +16,7 @@ interface InvoiceDetail {
   invoice_month: string
   invoice_items: {
     quantity: number
-    supply_items: {
-      name: string
-    }
+    name: string
     price_at_creation: number
   }[]
   properties: {
@@ -160,7 +158,7 @@ export function GeneratedPDF({ invoices }: { invoices: any }) {
             {invoiceDetails.invoice_items.map((item, index) => (
               <View key={index} style={styles.tableRow}>
                 <Text style={[styles.tableCell, { width: '60%' }]}>
-                  {item.supply_items.name}
+                  {item.name}
                 </Text>
                 <Text style={[styles.tableCell, { width: '20%' }]}>
                   {item.quantity}

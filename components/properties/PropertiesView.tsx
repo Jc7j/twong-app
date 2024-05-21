@@ -42,7 +42,7 @@ function PropertiesView() {
     <section className="md:w-7/12 md:mr-8 mt-8 md:mt-0">
       <InvoicesPDF isOpen={dialogOpen} onOpenChange={setDialogOpen} />
       <span className="flex items-center justify-between gap-4">
-        <label className="input flex items-center border border-accent rounded-full px-4 py-3">
+        <span className="input flex items-center border border-accent rounded-full px-4 py-3">
           <svg
             width="15"
             height="15"
@@ -74,7 +74,7 @@ function PropertiesView() {
             onChange={handleSearchChange}
             className="flex-grow border-none outline-none bg-inherit truncate"
           />
-        </label>
+        </span>
         <button
           onClick={() => setDialogOpen(true)}
           className="flex gap-1 items-center text-accent"

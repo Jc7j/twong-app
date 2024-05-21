@@ -14,7 +14,7 @@ export async function fetchInvoicesByPropertyId(
       total,
       last_modified,
       management_fee,
-      invoiceItems:invoice_items(*, supplyItem:supply_items(*))
+      invoiceItems:invoice_items(*)
     `
     )
     .eq('property_id', propertyId)
@@ -36,7 +36,7 @@ export async function fetchInvoices(date: Date) {
   const { data, error } = await supabase
     .from('invoices')
     .select(
-      `total, management_fee, invoice_month,  invoice_items(price_at_creation, quantity, supply_items(name)),
+      `total, management_fee, invoice_month, invoice_items(price_at_creation, quantity, name),
       properties(name, address)
       `
     )
@@ -85,11 +85,12 @@ export async function updateInvoiceMonth(
 
 export async function updateManagementFee(
   invoiceId: number,
-  managementFee: number
+  managementFee: number,
+  invoiceTotal: number
 ) {
   const { error } = await supabase
     .from('invoices')
-    .update({ management_fee: managementFee })
+    .update({ management_fee: managementFee, total: invoiceTotal + managementFee})
     .match({ invoice_id: invoiceId })
   if (error) throw new Error('Failed to update management fee')
 }

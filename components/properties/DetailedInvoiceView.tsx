@@ -74,7 +74,7 @@ export function DetailedInvoiceView({
     try {
       setIsEditing(false)
       if (invoice.management_fee != editedManagementFee) {
-        await updateManagementFee(invoice.invoice_id, editedManagementFee)
+        await updateManagementFee(invoice.invoice_id, editedManagementFee, invoice.total)
       }
       for (const item of stagedItems) {
         if (item.quantity > 0) {
@@ -281,13 +281,13 @@ export function DetailedInvoiceView({
             <div key={item.item_id || index} className="flex justify-between">
               <span>
                 <p className="inline text-sm mr-1">x{item.quantity}</p>
-                <p className="inline">{item.supplyItem?.name || otherValue.name}</p>
+                <p className="inline">{item.name || otherValue.name}</p>
               </span>
               {item.quantity && (
                 <span>
                   $
                   {numToFixedFloat(
-                    ((item.supplyItem?.price as number) || otherValue.price) * item.quantity
+                    ((item.price_at_creation as number) || otherValue.price) * item.quantity
                   )}
                 </span>
               )}

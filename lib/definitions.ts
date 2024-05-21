@@ -30,7 +30,6 @@ export interface InvoiceItem {
   name: string
   quantity: number
   price_at_creation: number
-  supplyItem?: SupplyItem
 }
 
 export interface SupplyItem {
