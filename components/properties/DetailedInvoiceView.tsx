@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogFooter,
+  DialogOverlay,
 } from '@/components/ui/dialog'
 import {
   calculateTotalWithTax,
@@ -226,6 +227,7 @@ export function DetailedInvoiceView({
         deleteFn={() => deleteInvoice(invoice.invoice_id)}
         fetchFn={() => fetchProperty(selectedProperty.property_id)}
       />
+      <DialogOverlay>
       <DialogContent
         className={'lg:max-w-screen-md overflow-y-auto max-h-screen'}
       >
@@ -252,7 +254,7 @@ export function DetailedInvoiceView({
           </div>
         </DialogHeader>
         <hr />
-        <div className="h-[250px] overflow-y-auto ">
+        <div className="h-[250px] overflow-y-auto">
           <h3 className="text-xl font-medium">Charges and Reimbursements</h3>
           <span className="flex justify-between font-normal">
             <p>Property Management Fee</p>
@@ -420,6 +422,7 @@ export function DetailedInvoiceView({
           </button>
         </span>
       </DialogContent>
+      </DialogOverlay>
     </Dialog>
   )
 }
