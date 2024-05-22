@@ -90,7 +90,10 @@ export async function updateManagementFee(
 ) {
   const { error } = await supabase
     .from('invoices')
-    .update({ management_fee: managementFee, total: invoiceTotal + managementFee})
+    .update({
+      management_fee: managementFee,
+      total: invoiceTotal + managementFee,
+    })
     .match({ invoice_id: invoiceId })
   if (error) throw new Error('Failed to update management fee')
 }

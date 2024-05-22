@@ -49,14 +49,18 @@ export function DetailedInvoiceView({
   const [isEditingInvoiceItems, setIsEditingInvoiceItems] = useState(false)
   const [addingItem, setAddingItem] = useState(false)
   const [editedMonth, setEditedMonth] = useState('')
-  const [selectedSupplyId, setSelectedSupplyId] = useState<number | null>(supplyItems.length ? supplyItems[0].supply_id : null)
+  const [selectedSupplyId, setSelectedSupplyId] = useState<number | null>(
+    supplyItems.length ? supplyItems[0].supply_id : null
+  )
   const [quantity, setQuantity] = useState(1)
   const [invoiceItems, setInvoiceItems] = useState(invoice.invoiceItems)
   const [stagedItems, setStagedItems] = useState<InvoiceItem[]>([])
-  const [editedManagementFee, setEditedManagementFee] = useState<number>(invoice.management_fee)
+  const [editedManagementFee, setEditedManagementFee] = useState<number>(
+    invoice.management_fee
+  )
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [isOtherSelected, setIsOtherSelected] = useState(false);
-  const [otherValue, setOtherValue] = useState({name: '', price: 0});
+  const [isOtherSelected, setIsOtherSelected] = useState(false)
+  const [otherValue, setOtherValue] = useState({ name: '', price: 0 })
 
   useEffect(() => {
     const formattedMonth = formatDate(new Date(invoice.invoice_month))
@@ -74,7 +78,11 @@ export function DetailedInvoiceView({
     try {
       setIsEditing(false)
       if (invoice.management_fee != editedManagementFee) {
-        await updateManagementFee(invoice.invoice_id, editedManagementFee, invoice.total)
+        await updateManagementFee(
+          invoice.invoice_id,
+          editedManagementFee,
+          invoice.total
+        )
       }
       for (const item of stagedItems) {
         if (item.quantity > 0) {
@@ -88,7 +96,7 @@ export function DetailedInvoiceView({
       }
       await fetchProperty(selectedProperty?.property_id as number)
       setEditedManagementFee(0)
-      setOtherValue({name: '', price: 0})
+      setOtherValue({ name: '', price: 0 })
       setIsOtherSelected(false)
       setStagedItems([])
       setOpen(false)
@@ -104,7 +112,10 @@ export function DetailedInvoiceView({
       const isoDate = formatDateToISO(editedMonth)
       try {
         setIsEditing(false)
-        const newUpdatedMonth = await updateInvoiceMonth(invoice.invoice_id, isoDate)
+        const newUpdatedMonth = await updateInvoiceMonth(
+          invoice.invoice_id,
+          isoDate
+        )
         setEditedMonth(formatDate(newUpdatedMonth))
       } catch (error) {
         console.error('Error updating invoice:', error)
@@ -114,7 +125,9 @@ export function DetailedInvoiceView({
   }
 
   function handleAddItem() {
-    const existingItemIndex = stagedItems.findIndex((item) => item.supply_id === selectedSupplyId)
+    const existingItemIndex = stagedItems.findIndex(
+      (item) => item.supply_id === selectedSupplyId
+    )
 
     if (existingItemIndex >= 0) {
       const newStagedItems = [...stagedItems]
@@ -128,9 +141,14 @@ export function DetailedInvoiceView({
         invoice_id: invoice.invoice_id,
         supply_id: selectedSupplyId as number,
         quantity,
-        name: supplyItems.find((item) => item.supply_id === selectedSupplyId)?.name,
-        price_at_creation: supplyItems.find((item) => item.supply_id === selectedSupplyId)?.price,
-        supplyItem: supplyItems.find((item) => item.supply_id === selectedSupplyId),
+        name: supplyItems.find((item) => item.supply_id === selectedSupplyId)
+          ?.name,
+        price_at_creation: supplyItems.find(
+          (item) => item.supply_id === selectedSupplyId
+        )?.price,
+        supplyItem: supplyItems.find(
+          (item) => item.supply_id === selectedSupplyId
+        ),
       }
       // @ts-ignore
       setStagedItems([...stagedItems, newItem])
@@ -152,7 +170,9 @@ export function DetailedInvoiceView({
   async function handleUpdatingInvoiceItems() {
     if (invoiceItems && invoice.invoiceItems) {
       for (const item of invoiceItems) {
-        const originalItem = invoice.invoiceItems.find((i) => i.item_id === item.item_id)
+        const originalItem = invoice.invoiceItems.find(
+          (i) => i.item_id === item.item_id
+        )
 
         // Check if the item should be updated or deleted
         if (originalItem) {
@@ -172,13 +192,13 @@ export function DetailedInvoiceView({
   }
 
   function handleSelectChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const value = parseInt(e.target.value);
-    setSelectedSupplyId(value);
+    const value = parseInt(e.target.value)
+    setSelectedSupplyId(value)
 
     if (value === -1) {
-      setIsOtherSelected(true);
+      setIsOtherSelected(true)
     } else {
-      setIsOtherSelected(false);
+      setIsOtherSelected(false)
     }
   }
 
@@ -193,7 +213,7 @@ export function DetailedInvoiceView({
     setEditedManagementFee(invoice.management_fee)
     setQuantity(1)
     setIsOtherSelected(false)
-    setOtherValue({name: '', price: 0})
+    setOtherValue({ name: '', price: 0 })
     setOpen(false)
   }
 
@@ -206,7 +226,9 @@ export function DetailedInvoiceView({
         deleteFn={() => deleteInvoice(invoice.invoice_id)}
         fetchFn={() => fetchProperty(selectedProperty.property_id)}
       />
-      <DialogContent className='overflow-y-scroll max-h-screen'>
+      <DialogContent
+        className={'lg:max-w-screen-md overflow-y-auto max-h-screen'}
+      >
         <DialogHeader>
           <h2 className="text-2xl font-medium">{property.name}</h2>
           <span>
@@ -287,7 +309,8 @@ export function DetailedInvoiceView({
                 <span>
                   $
                   {numToFixedFloat(
-                    ((item.price_at_creation as number) || otherValue.price) * item.quantity
+                    ((item.price_at_creation as number) || otherValue.price) *
+                      item.quantity
                   )}
                 </span>
               )}
@@ -333,9 +356,12 @@ export function DetailedInvoiceView({
                       />
                       <input
                         type="number"
-                        value={otherValue.price || "Price"}
+                        value={otherValue.price || 'Price'}
                         onChange={(e) =>
-                          setOtherValue({ ...otherValue, price: parseFloat(e.target.value) })
+                          setOtherValue({
+                            ...otherValue,
+                            price: parseFloat(e.target.value),
+                          })
                         }
                         placeholder="Price"
                         className="border-accent mt-1"
@@ -364,7 +390,11 @@ export function DetailedInvoiceView({
         <DialogFooter className="flex flex-col">
           <span className="flex justify-between items-end">
             <p className="text-xs text-primary">taxes (8.375%)</p>
-            <p>${invoice.invoiceItems && calculateTotalWithTax(invoice.invoiceItems).toFixed(2)}</p>
+            <p>
+              $
+              {invoice.invoiceItems &&
+                calculateTotalWithTax(invoice.invoiceItems).toFixed(2)}
+            </p>
           </span>
           <span className="flex justify-between items-end">
             <p className="text-xl mt-3">Total:</p>

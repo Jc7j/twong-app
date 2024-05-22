@@ -71,9 +71,9 @@ export function numToFixedFloat(num: number): number {
   return parseFloat(res.toFixed(2))
 }
 
-export function calculateTotalWithTax(items: InvoiceItem[]){
+export function calculateTotalWithTax(items: InvoiceItem[]) {
   const nevadaTax = 0.08375
   return items.reduce((total, item) => {
-     return total + (item.price_at_creation * nevadaTax);
-  }, 0);
-};
+    return total + item.price_at_creation * nevadaTax
+  }, 0)
+}
