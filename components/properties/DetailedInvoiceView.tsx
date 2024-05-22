@@ -206,7 +206,7 @@ export function DetailedInvoiceView({
         deleteFn={() => deleteInvoice(invoice.invoice_id)}
         fetchFn={() => fetchProperty(selectedProperty.property_id)}
       />
-      <DialogContent>
+      <DialogContent className='h-full w-full'>
         <DialogHeader>
           <h2 className="text-2xl font-medium">{property.name}</h2>
           <span>
