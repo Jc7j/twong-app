@@ -126,7 +126,7 @@ export default function SuppliesView() {
             Next
           </button>
           <button
-            className="ml-8 px-5 py-3 text-sm shadow border bg-accent font-medium text-background rounded-lg  truncate"
+            className="ml-8 px-5 py-3 text-sm shadow border bg-accent font-medium text-background rounded-lg truncate"
             onClick={() => setOpen(true)}
           >
             Create new Item

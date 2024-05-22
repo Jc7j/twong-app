@@ -233,7 +233,7 @@ export function DetailedInvoiceView({
       >
         <DialogHeader>
           <h2 className="text-2xl font-medium">{property.name}</h2>
-          <span>
+          <span className='flex items-end gap-2'>
             <EditableField
               className="text-sm"
               onChange={(value: string) => setEditedMonth(value)}
@@ -245,17 +245,11 @@ export function DetailedInvoiceView({
               setIsEditing={setIsEditing}
               handleSave={handleOnSaveEditMonth}
             />
-          </span>
-          {/* <div className="text-sm text-primary mt-4">
-            <p>{property.owner?.name}</p>
-            <p>{property.address}</p>
-            <p>{property.owner?.email}</p>
-            <p>{property.owner?.phone_number}</p>
-          </div> */}
+            </span>
         </DialogHeader>
         <hr />
         <div className="h-[250px] overflow-y-auto">
-          <h3 className="text-xl">Charges and Reimbursements</h3>
+          <h3 className="text-xl text-center">Charges and Reimbursements</h3>
           <span className="flex justify-between font-normal">
             <p>Property Management Fee</p>
             <span className="w-1/5 flex">
@@ -404,7 +398,7 @@ export function DetailedInvoiceView({
           </span>
         
         <hr className='my-5'/>
-        <p className="text-sm text-secondary text-center">
+        <p className="text-sm text-secondary ">
           Last Modified {formatDateWithTime(invoice.last_modified)}
         </p>
         <span className="flex justify-between items-end mt-4">
