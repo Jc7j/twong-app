@@ -218,6 +218,7 @@ export function DetailedInvoiceView({
     setOpen(false)
   }
 
+  console.log("stagedItems", stagedItems)
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DeletePopup
@@ -227,7 +228,6 @@ export function DetailedInvoiceView({
         deleteFn={() => deleteInvoice(invoice.invoice_id)}
         fetchFn={() => fetchProperty(selectedProperty.property_id)}
       />
-      <DialogOverlay>
       <DialogContent
         className={'lg:max-w-screen-md overflow-y-auto max-h-screen'}
       >
@@ -246,16 +246,16 @@ export function DetailedInvoiceView({
               handleSave={handleOnSaveEditMonth}
             />
           </span>
-          <div className="text-sm text-primary mt-4">
+          {/* <div className="text-sm text-primary mt-4">
             <p>{property.owner?.name}</p>
             <p>{property.address}</p>
             <p>{property.owner?.email}</p>
             <p>{property.owner?.phone_number}</p>
-          </div>
+          </div> */}
         </DialogHeader>
         <hr />
         <div className="h-[250px] overflow-y-auto">
-          <h3 className="text-xl font-medium">Charges and Reimbursements</h3>
+          <h3 className="text-xl">Charges and Reimbursements</h3>
           <span className="flex justify-between font-normal">
             <p>Property Management Fee</p>
             <span className="w-1/5 flex">
@@ -297,7 +297,7 @@ export function DetailedInvoiceView({
             isEditing={isEditingInvoiceItems}
             setIsEditing={setIsEditingInvoiceItems}
             handleSave={handleUpdatingInvoiceItems}
-            editText="Edit invoice items"
+            editText="Edit items"
           />
           <hr className="mt-4" />
           <p className="text-accent font-medium text-center">Staged Items</p>
@@ -389,7 +389,7 @@ export function DetailedInvoiceView({
           )}
         </div>
         <hr className="mt-8" />
-        <DialogFooter className="flex flex-col">
+        <DialogFooter>
           <span className="flex justify-between items-end">
             <p className="text-xs text-primary">taxes (8.375%)</p>
             <p>
@@ -402,8 +402,8 @@ export function DetailedInvoiceView({
             <p className="text-xl mt-3">Total:</p>
             <p>${invoice.total}</p>
           </span>
-        </DialogFooter>
-        <hr />
+        
+        <hr className='my-5'/>
         <p className="text-sm text-secondary text-center">
           Last Modified {formatDateWithTime(invoice.last_modified)}
         </p>
@@ -421,8 +421,8 @@ export function DetailedInvoiceView({
             delete invoice
           </button>
         </span>
+        </DialogFooter>
       </DialogContent>
-      </DialogOverlay>
     </Dialog>
   )
 }
