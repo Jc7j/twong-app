@@ -55,6 +55,22 @@ export default function PropertyMonthInvoiceTable() {
     }
   })
 
+  const totals = filteredProperties.reduce(
+    (acc, property) => {
+      property.invoices?.forEach((invoice) => {
+        const invoiceItemsTotal = invoice.invoiceItems?.reduce(
+          (total, item) => total + item.quantity * item.price_at_creation,
+          0
+        )
+        acc.management_fee += invoice.management_fee
+        acc.invoiceItemsTotal += invoiceItemsTotal || 0
+        acc.invoice_total += invoice.total
+      })
+      return acc
+    },
+    { management_fee: 0, invoiceItemsTotal: 0, invoice_total: 0 }
+  )
+
   return (
     <div className="container mx-auto p-4">
       <form onSubmit={handleSubmit} className="mb-4">
@@ -85,6 +101,12 @@ export default function PropertyMonthInvoiceTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
+          <TableRow>
+            <TableCell className="py-2 px-4 border font-bold">Total</TableCell>
+            <TableCell className="py-2 px-4 border font-bold">${totals.management_fee.toFixed(2)}</TableCell>
+            <TableCell className="py-2 px-4 border font-bold">${totals.invoiceItemsTotal.toFixed(2)}</TableCell>
+            <TableCell className="py-2 px-4 border font-bold">${totals.invoice_total.toFixed(2)}</TableCell>
+          </TableRow>
           {filteredProperties.map((property) =>
             property.invoices?.map((invoice) => {
               const invoiceItemsTotal = invoice.invoiceItems?.reduce(

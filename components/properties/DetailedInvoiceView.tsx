@@ -229,7 +229,7 @@ export function DetailedInvoiceView({
         fetchFn={() => fetchProperty(selectedProperty.property_id)}
       />
       <DialogContent
-        className={'lg:max-w-screen-md overflow-y-auto max-h-screen'}
+        className={'lg:max-w-screen-sm overflow-y-auto max-h-screen'}
       >
         <DialogHeader>
           <h2 className="text-2xl font-medium">{property.name}</h2>
