@@ -30,6 +30,7 @@ export interface InvoiceItem {
   name: string
   quantity: number
   price_at_creation: number
+  is_maintenance: boolean
 }
 
 export interface SupplyItem {

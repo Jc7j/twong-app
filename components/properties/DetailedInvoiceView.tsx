@@ -32,6 +32,7 @@ import { useDialogInvoiceOpen } from '@/hooks/useDialogOpen'
 import { useSupplyStore } from '@/hooks/stores/useSuppliesStore'
 import { EditableNumberField } from '../EditableNumberField'
 import DeletePopup from '../DeletePopup'
+import MaintenanceLabel from '../MaintenanceLabel'
 
 interface DetailedInvoiceViewProps {
   invoice: Invoice
@@ -91,7 +92,8 @@ export function DetailedInvoiceView({
             invoice.invoice_id,
             item.name || otherValue.name,
             item.quantity,
-            item.price_at_creation || otherValue.price
+            item.price_at_creation || otherValue.price,
+            item.name ? false : true // Set is_maintenance to true for otherValue
           )
         }
       }
@@ -218,7 +220,6 @@ export function DetailedInvoiceView({
     setOpen(false)
   }
 
-  console.log("stagedItems", stagedItems)
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DeletePopup
@@ -277,7 +278,8 @@ export function DetailedInvoiceView({
                     isEditing={isEditingInvoiceItems}
                     className="inline text-sm mr-1 w-1/3"
                   />
-                  <p className="inline">{item.name}</p>
+                  <p className="max-w-36 trunacte inline mr-2">{item.name}</p>
+                  {item.is_maintenance && <MaintenanceLabel />}
                 </span>
                 <p>
                   $

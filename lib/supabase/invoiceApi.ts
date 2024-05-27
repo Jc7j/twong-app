@@ -36,7 +36,7 @@ export async function fetchInvoices(date: Date) {
   const { data, error } = await supabase
     .from('invoices')
     .select(
-      `total, management_fee, invoice_month, invoice_items(price_at_creation, quantity, name),
+      `total, management_fee, invoice_month, invoice_items(price_at_creation, quantity, name, is_maintenance),
       properties(name, address)
       `
     )
@@ -102,11 +102,12 @@ export async function addInvoiceItem(
   invoiceId: number,
   name: string,
   quantity: number,
-  price_at_creation: number
+  price_at_creation: number,
+  is_maintenance: boolean
 ) {
   const { error } = await supabase
     .from('invoice_items')
-    .insert({ invoice_id: invoiceId, quantity, name, price_at_creation })
+    .insert({ invoice_id: invoiceId, quantity, name, price_at_creation, is_maintenance })
   if (error) throw new Error('Failed to add invoice item')
 }
 
