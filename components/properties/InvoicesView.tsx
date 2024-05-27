@@ -158,7 +158,7 @@ export default function InvoiceView() {
           >
             <span className="flex items-center w-3/5">
               <p className="mr-2">{formatDate(invoice.invoice_month)}</p>
-              {invoice.management_fee > 0 && (
+              {invoice.invoiceItems?.some(item => item.is_maintenance) && (
                 <svg
                   width="15"
                   height="15"
