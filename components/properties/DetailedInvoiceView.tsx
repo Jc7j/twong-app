@@ -396,7 +396,10 @@ export function DetailedInvoiceView({
           </span>
           <span className="flex justify-between items-end">
             <p className="text-xl mt-3">Total:</p>
-            <p>${invoice.total}</p>
+            <p>
+              {(invoice.total + (invoice.invoiceItems ? 
+                parseFloat(calculateTotalWithTax(invoice.invoiceItems).toFixed(2)) : 0)).toFixed(2)}
+            </p>
           </span>
         
         <hr className='my-5'/>

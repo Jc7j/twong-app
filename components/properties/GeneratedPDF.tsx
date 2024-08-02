@@ -194,7 +194,7 @@ export function GeneratedPDF({ invoices }: { invoices: any }) {
             </View>
             <View style={styles.total}>
               <Text>Total Due:</Text>
-              <Text>${invoiceDetails.total.toFixed(2)}</Text>
+              <Text>${(invoiceDetails.total + taxAmount).toFixed(2)}</Text>
             </View>
           </Page>
         );
