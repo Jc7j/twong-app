@@ -61,10 +61,11 @@ export default function PropertyMonthInvoiceTable() {
         const invoiceItemsTotal = invoice.invoiceItems?.reduce(
           (total, item) => total + item.quantity * item.price_at_creation,
           0
-        )
+        ) || 0
+        const tax = invoiceItemsTotal * 0.08375
         acc.management_fee += invoice.management_fee
-        acc.invoiceItemsTotal += invoiceItemsTotal || 0
-        acc.invoice_total += invoice.total
+        acc.invoiceItemsTotal += invoiceItemsTotal
+        acc.invoice_total += invoice.total + tax
       })
       return acc
     },
@@ -112,7 +113,9 @@ export default function PropertyMonthInvoiceTable() {
               const invoiceItemsTotal = invoice.invoiceItems?.reduce(
                 (total, item) => total + item.quantity * item.price_at_creation,
                 0
-              )
+              ) || 0
+              const tax = invoiceItemsTotal * 0.08375
+              const totalWithTax = invoice.total + tax
 
               return (
                 <TableRow key={invoice.invoice_id}>
@@ -123,10 +126,10 @@ export default function PropertyMonthInvoiceTable() {
                     ${invoice.management_fee.toFixed(2)}
                   </TableCell>
                   <TableCell className="py-2 px-4 border">
-                    ${invoiceItemsTotal?.toFixed(2)}
+                    ${invoiceItemsTotal.toFixed(2)}
                   </TableCell>
                   <TableCell className="py-2 px-4 border">
-                    ${invoice.total.toFixed(2)}
+                    ${totalWithTax.toFixed(2)}
                   </TableCell>
                 </TableRow>
               )
