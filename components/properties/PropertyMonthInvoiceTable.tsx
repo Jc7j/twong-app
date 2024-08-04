@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { calculateTax, formatCurrency } from '@/lib/utils'
 
 export default function PropertyMonthInvoiceTable() {
   const { properties, fetchProperties } = usePropertiesStore()
@@ -62,10 +63,13 @@ export default function PropertyMonthInvoiceTable() {
           (total, item) => total + item.quantity * item.price_at_creation,
           0
         ) || 0
-        const tax = invoiceItemsTotal * 0.08375
+        const taxableItemsTotal = invoice.invoiceItems?.filter(item => !item.is_maintenance)
+          .reduce((total, item) => total + item.quantity * item.price_at_creation, 0) || 0
+        const tax = calculateTax(taxableItemsTotal)
+        const totalWithTax = invoice.total + tax
         acc.management_fee += invoice.management_fee
         acc.invoiceItemsTotal += invoiceItemsTotal
-        acc.invoice_total += invoice.total + tax
+        acc.invoice_total += totalWithTax
       })
       return acc
     },
@@ -104,9 +108,9 @@ export default function PropertyMonthInvoiceTable() {
         <TableBody>
           <TableRow>
             <TableCell className="py-2 px-4 border font-bold">Total</TableCell>
-            <TableCell className="py-2 px-4 border font-bold">${totals.management_fee.toFixed(2)}</TableCell>
-            <TableCell className="py-2 px-4 border font-bold">${totals.invoiceItemsTotal.toFixed(2)}</TableCell>
-            <TableCell className="py-2 px-4 border font-bold">${totals.invoice_total.toFixed(2)}</TableCell>
+            <TableCell className="py-2 px-4 border font-bold">{formatCurrency(totals.management_fee)}</TableCell>
+            <TableCell className="py-2 px-4 border font-bold">{formatCurrency(totals.invoiceItemsTotal)}</TableCell>
+            <TableCell className="py-2 px-4 border font-bold">{formatCurrency(totals.invoice_total)}</TableCell>
           </TableRow>
           {filteredProperties.map((property) =>
             property.invoices?.map((invoice) => {
@@ -114,7 +118,9 @@ export default function PropertyMonthInvoiceTable() {
                 (total, item) => total + item.quantity * item.price_at_creation,
                 0
               ) || 0
-              const tax = invoiceItemsTotal * 0.08375
+              const taxableItemsTotal = invoice.invoiceItems?.filter(item => !item.is_maintenance)
+                .reduce((total, item) => total + item.quantity * item.price_at_creation, 0) || 0
+              const tax = calculateTax(taxableItemsTotal)
               const totalWithTax = invoice.total + tax
 
               return (
@@ -123,13 +129,13 @@ export default function PropertyMonthInvoiceTable() {
                     {property.name}
                   </TableCell>
                   <TableCell className="py-2 px-4 border">
-                    ${invoice.management_fee.toFixed(2)}
+                    {formatCurrency(invoice.management_fee)}
                   </TableCell>
                   <TableCell className="py-2 px-4 border">
-                    ${invoiceItemsTotal.toFixed(2)}
+                    {formatCurrency(invoiceItemsTotal)}
                   </TableCell>
                   <TableCell className="py-2 px-4 border">
-                    ${totalWithTax.toFixed(2)}
+                    {formatCurrency(totalWithTax)}
                   </TableCell>
                 </TableRow>
               )

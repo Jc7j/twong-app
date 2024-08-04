@@ -79,3 +79,11 @@ export function calculateTotalWithTax(items: InvoiceItem[]) {
       return total + item.price_at_creation * nevadaTax
     }, 0)
 }
+
+export function formatCurrency(amount: number): string {
+  return `$${amount.toFixed(2)}`
+}
+
+export function calculateTax(amount: number): number {
+  return amount * 0.08375
+}

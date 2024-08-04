@@ -10,7 +10,9 @@ import {
   DialogOverlay,
 } from '@/components/ui/dialog'
 import {
+  calculateTax,
   calculateTotalWithTax,
+  formatCurrency,
   formatDate,
   formatDateToISO,
   formatDateWithTime,
@@ -282,8 +284,7 @@ export function DetailedInvoiceView({
                   {item.is_maintenance && <MaintenanceLabel />}
                 </span>
                 <p>
-                  $
-                  {numToFixedFloat(
+                  {formatCurrency(
                     (item.price_at_creation as number) * item.quantity
                   )}
                 </p>
@@ -306,7 +307,7 @@ export function DetailedInvoiceView({
               {item.quantity && (
                 <span>
                   $
-                  {numToFixedFloat(
+                  {formatCurrency(
                     ((item.price_at_creation as number) || otherValue.price) *
                       item.quantity
                   )}
@@ -389,9 +390,16 @@ export function DetailedInvoiceView({
           <span className="flex justify-between items-end">
             <p className="text-xs text-primary">taxes (8.375%)</p>
             <p>
-              $
-              {invoice.invoiceItems &&
-                calculateTotalWithTax(invoice.invoiceItems).toFixed(2)}
+              {formatCurrency(
+                invoice.invoiceItems
+                  ? calculateTax(
+                      invoice.invoiceItems.reduce(
+                        (total, item) => total + item.price_at_creation * item.quantity,
+                        0
+                      )
+                    )
+        : 0
+    )}
             </p>
           </span>
           <span className="flex justify-between items-end">

@@ -1,5 +1,6 @@
 'use client'
 
+import { calculateTax, formatCurrency } from '@/lib/utils'
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 
 function todaysDate() {
@@ -108,10 +109,10 @@ export function GeneratedPDF({ invoices }: { invoices: any }) {
     <Document>
       {invoices.map((invoiceDetails: InvoiceDetail) => {
         const taxableItemsTotal = invoiceDetails.invoice_items
-          .filter(item => !item.is_maintenance)
-          .reduce((total, item) => total + item.price_at_creation * item.quantity, 0);
+        .filter(item => !item.is_maintenance)
+        .reduce((total, item) => total + item.price_at_creation * item.quantity, 0);
 
-        const taxAmount = taxableItemsTotal * 0.08375;
+        const taxAmount = calculateTax(taxableItemsTotal);
 
         return (
           <Page
@@ -160,7 +161,7 @@ export function GeneratedPDF({ invoices }: { invoices: any }) {
                 </Text>
                 <Text style={[styles.tableCell, { width: '20%' }]}>{''}</Text>
                 <Text style={[styles.tableCell, { width: '20%' }]}>
-                  ${invoiceDetails.management_fee.toFixed(2)}
+                  {formatCurrency(invoiceDetails.management_fee)}
                 </Text>
               </View>
               {invoiceDetails.invoice_items.map((item, index) => (
@@ -172,7 +173,7 @@ export function GeneratedPDF({ invoices }: { invoices: any }) {
                     {item.quantity}
                   </Text>
                   <Text style={[styles.tableCell, { width: '20%' }]}>
-                    ${(item.price_at_creation * item.quantity).toFixed(2)}
+                    {formatCurrency(item.price_at_creation * item.quantity)}
                   </Text>
                 </View>
               ))}
