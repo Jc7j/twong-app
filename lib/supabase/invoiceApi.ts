@@ -28,6 +28,17 @@ export async function fetchInvoicesByPropertyId(
   return invoices
 }
 
+export async function updateInvoiceTotal(
+  invoiceId: number,
+  total: number
+) {
+  const { error } = await supabase
+    .from('invoices')
+    .update({ total })
+    .match({ invoice_id: invoiceId })
+  if (error) throw new Error('Failed to update invoice total')
+}
+
 export async function fetchInvoices(date: Date) {
   const month = date.getMonth() + 1
   const year = date.getFullYear()
@@ -85,15 +96,11 @@ export async function updateInvoiceMonth(
 
 export async function updateManagementFee(
   invoiceId: number,
-  managementFee: number,
-  invoiceTotal: number
+  managementFee: number
 ) {
   const { error } = await supabase
     .from('invoices')
-    .update({
-      management_fee: managementFee,
-      total: invoiceTotal + managementFee,
-    })
+    .update({ management_fee: managementFee })
     .match({ invoice_id: invoiceId })
   if (error) throw new Error('Failed to update management fee')
 }
@@ -141,6 +148,16 @@ export async function deleteInvoiceItem(itemId: number) {
 }
 
 export async function deleteInvoice(invoiceId: number) {
+  const { error: itemsError } = await supabase
+    .from('invoice_items')
+    .delete()
+    .match({ invoice_id: invoiceId })
+
+  if (itemsError) {
+    console.error('Error deleting invoice items', itemsError.message)
+    throw new Error('Failed to delete invoice items')
+  }
+
   const { error } = await supabase
     .from('invoices')
     .delete()

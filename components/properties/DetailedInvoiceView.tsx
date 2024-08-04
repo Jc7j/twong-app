@@ -24,6 +24,7 @@ import {
   deleteInvoiceItem,
   updateInvoiceItemQuantity,
   updateInvoiceMonth,
+  updateInvoiceTotal,
   updateManagementFee,
 } from '@/lib/supabase/invoiceApi'
 import { EditableField } from '../EditableField'
@@ -81,24 +82,32 @@ export function DetailedInvoiceView({
   async function handleSave() {
     try {
       setIsEditing(false)
+      let newTotal = 0;
+  
       if (invoice.management_fee != editedManagementFee) {
         await updateManagementFee(
           invoice.invoice_id,
-          editedManagementFee,
-          invoice.total
+          editedManagementFee
         )
+        newTotal += editedManagementFee;
       }
+  
       for (const item of stagedItems) {
         if (item.quantity > 0) {
+          const itemTotal = item.quantity * (item.price_at_creation || otherValue.price);
+          newTotal += itemTotal;
           await addInvoiceItem(
             invoice.invoice_id,
             item.name || otherValue.name,
             item.quantity,
             item.price_at_creation || otherValue.price,
-            item.name ? false : true // Set is_maintenance to true for otherValue
+            item.name ? false : true
           )
         }
       }
+  
+      // Update the invoice total
+      await updateInvoiceTotal(invoice.invoice_id, newTotal);
       await fetchProperty(selectedProperty?.property_id as number)
       setEditedManagementFee(0)
       setOtherValue({ name: '', price: 0 })
@@ -174,22 +183,22 @@ export function DetailedInvoiceView({
 
   async function handleUpdatingInvoiceItems() {
     if (invoiceItems && invoice.invoiceItems) {
+      let newTotal = invoice.management_fee;
       for (const item of invoiceItems) {
         const originalItem = invoice.invoiceItems.find(
           (i) => i.item_id === item.item_id
         )
-
-        // Check if the item should be updated or deleted
+  
         if (originalItem) {
           if (item.quantity === 0) {
-            // Delete the item if the quantity is zero
             await deleteInvoiceItem(item.item_id)
           } else if (item.quantity !== originalItem.quantity) {
-            // Update the item only if the quantity has changed and is not zero
             await updateInvoiceItemQuantity(item.item_id, item.quantity)
           }
+          newTotal += item.quantity * item.price_at_creation;
         }
       }
+      await updateInvoiceTotal(invoice.invoice_id, newTotal);
     } else {
       console.warn('Invoice items data is not available')
     }
@@ -221,6 +230,22 @@ export function DetailedInvoiceView({
     setOtherValue({ name: '', price: 0 })
     setOpen(false)
   }
+
+  const taxableItemsTotal = invoice.invoiceItems
+  ? invoice.invoiceItems
+      .filter(item => !item.is_maintenance)
+      .reduce((total, item) => total + item.price_at_creation * item.quantity, 0)
+  : 0;
+
+const maintenanceItemsTotal = invoice.invoiceItems
+  ? invoice.invoiceItems
+      .filter(item => item.is_maintenance)
+      .reduce((total, item) => total + item.price_at_creation * item.quantity, 0)
+  : 0;
+
+const taxAmount = calculateTax(taxableItemsTotal);
+const subtotal = taxableItemsTotal + maintenanceItemsTotal + invoice.management_fee;
+const totalWithTax = subtotal + taxAmount;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -306,7 +331,6 @@ export function DetailedInvoiceView({
               </span>
               {item.quantity && (
                 <span>
-                  $
                   {formatCurrency(
                     ((item.price_at_creation as number) || otherValue.price) *
                       item.quantity
@@ -390,23 +414,13 @@ export function DetailedInvoiceView({
           <span className="flex justify-between items-end">
             <p className="text-xs text-primary">taxes (8.375%)</p>
             <p>
-              {formatCurrency(
-                invoice.invoiceItems
-                  ? calculateTax(
-                      invoice.invoiceItems.reduce(
-                        (total, item) => total + item.price_at_creation * item.quantity,
-                        0
-                      )
-                    )
-        : 0
-    )}
+              {formatCurrency(taxAmount)}
             </p>
           </span>
           <span className="flex justify-between items-end">
             <p className="text-xl mt-3">Total:</p>
             <p>
-              {(invoice.total + (invoice.invoiceItems ? 
-                parseFloat(calculateTotalWithTax(invoice.invoiceItems).toFixed(2)) : 0)).toFixed(2)}
+              {formatCurrency(totalWithTax)}
             </p>
           </span>
         
