@@ -7,16 +7,13 @@ import {
   DialogContent,
   DialogHeader,
   DialogFooter,
-  DialogOverlay,
 } from '@/components/ui/dialog'
 import {
   calculateTax,
-  calculateTotalWithTax,
   formatCurrency,
   formatDate,
   formatDateToISO,
   formatDateWithTime,
-  numToFixedFloat,
 } from '@/lib/utils'
 import {
   addInvoiceItem,
@@ -84,14 +81,17 @@ export function DetailedInvoiceView({
       setIsEditing(false)
       let newTotal = 0;
   
-      if (invoice.management_fee != editedManagementFee) {
-        await updateManagementFee(
-          invoice.invoice_id,
-          editedManagementFee
-        )
-        newTotal += editedManagementFee;
+      // Include management fee
+      newTotal += editedManagementFee;
+  
+      // Include existing invoice items
+      if (invoiceItems) {
+        for (const item of invoiceItems) {
+          newTotal += item.quantity * item.price_at_creation;
+        }
       }
   
+      // Include staged items
       for (const item of stagedItems) {
         if (item.quantity > 0) {
           const itemTotal = item.quantity * (item.price_at_creation || otherValue.price);
@@ -106,10 +106,18 @@ export function DetailedInvoiceView({
         }
       }
   
+      // Update management fee if changed
+      if (invoice.management_fee !== editedManagementFee) {
+        await updateManagementFee(
+          invoice.invoice_id,
+          editedManagementFee
+        )
+      }
+  
       // Update the invoice total
       await updateInvoiceTotal(invoice.invoice_id, newTotal);
       await fetchProperty(selectedProperty?.property_id as number)
-      setEditedManagementFee(0)
+      setEditedManagementFee(editedManagementFee)
       setOtherValue({ name: '', price: 0 })
       setIsOtherSelected(false)
       setStagedItems([])
@@ -119,7 +127,6 @@ export function DetailedInvoiceView({
       alert('Failed to save changes: ' + error)
     }
   }
-
   async function handleOnSaveEditMonth() {
     const validationResult = monthYearSchema.safeParse(editedMonth)
     if (validationResult.success) {
@@ -198,7 +205,16 @@ export function DetailedInvoiceView({
           newTotal += item.quantity * item.price_at_creation;
         }
       }
+  
+      // Include existing invoice items that weren't modified
+      for (const item of invoice.invoiceItems) {
+        if (!invoiceItems.find(i => i.item_id === item.item_id)) {
+          newTotal += item.quantity * item.price_at_creation;
+        }
+      }
+  
       await updateInvoiceTotal(invoice.invoice_id, newTotal);
+      await fetchProperty(selectedProperty?.property_id as number);
     } else {
       console.warn('Invoice items data is not available')
     }
